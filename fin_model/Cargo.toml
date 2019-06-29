@@ -1,0 +1,9 @@
+[package]
+name = "fin_model"
+version = "0.1.0"
+authors = ["Simon Johnston <johnstonskj@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+chrono = "0.4.7"
+steel-cent = "0.2.2"
