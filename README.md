@@ -1,4 +1,4 @@
-# rust-financial
+# Project rust-financial
 
 A comprehensive data model for various financial data, with implementation 
 using IEX.
