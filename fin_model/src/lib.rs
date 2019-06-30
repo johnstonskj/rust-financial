@@ -34,7 +34,7 @@ pub struct Bounded<T> {
 
 pub mod quote;
 
-pub mod data;
+pub mod analysis;
 
 pub mod provider;
 
