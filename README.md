@@ -1,6 +1,14 @@
 # rust-financial
 
-Model for provider-neutral financial data, with implementation for IEX.
+A comprehensive data model for various financial data, with implementation 
+using IEX.
+
+The purpose of this project is to construct a comprehensive data model, not of 
+a specific API but the _right_ model we would hope to see. This model can
+then be populated using requests described with traits and implemented by
+a given service provider. Thus, clients can use the common data model with
+Rust-native types and idioms but switch in different providers for different
+data types, markets, or qualities of service.
 
 ## Library fin_model
 
