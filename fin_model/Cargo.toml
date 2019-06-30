@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Simon Johnston <johnstonskj@gmail.com>"]
 edition = "2018"
 
+[lib]
+crate-type = ["dylib"]
+plugin = true
+
 [dependencies]
 chrono = "0.4.7"
 steel-cent = "0.2.2"

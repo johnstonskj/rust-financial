@@ -1,16 +1,10 @@
 /*!
-Model for a provider that implements the financial data traits.
+Provides the trait required by service provider implementations.
 
-```compile_fail
-use some_provider::AProvider;
 
-let provider = match AProvider::new() {
-    Ok(provider) => provider,
-    Err(err) => panic!("Error configuring provider, {:?}", err)
-};
-
-println!("{}. ({})", provider.attribution(), provider.url());
-```
+Before implementing any _request traits_ a service provider needs to
+implement the `Provider` trait. This is the mechanism by which a client
+instantiates a specific service provider.
 */
 
 use crate::request::RequestResult;
@@ -24,7 +18,7 @@ pub trait Provider
     /// involve a network operation, to perform authentication for example.
     fn new() -> RequestResult<Self>;
 
-    /// Return a string that can be used to describe the provider.
+    /// A string that can be used to name or describe the provider.
     fn attribution(&self) -> String;
 
     /// The URL to the provider's home page or documentation.

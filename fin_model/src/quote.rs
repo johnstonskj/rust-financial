@@ -1,3 +1,7 @@
+/*!
+Provides structs and traits that represent quotes for market prices.
+*/
+
 use steel_cent::SmallMoney;
 use chrono::{DateTime,Local};
 

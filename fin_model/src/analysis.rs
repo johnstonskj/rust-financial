@@ -1,3 +1,7 @@
+/*!
+Provides structs and traits that represent common market analysis.
+*/
+
 use steel_cent::SmallMoney;
 use chrono::{DateTime,Local};
 
@@ -5,27 +9,29 @@ use crate::{Symbol, Snapshot, Bounded};
 use crate::quote::PriceBounds;
 use crate::request::RequestResult;
 
+pub type Counter = u32;
+
 pub struct Ratings {
-    buy: u32,
-    hold: u32,
-    none: u32,
-    sell: u32,
-    overweight: u32,
-    underweight: u32,
-    scale_mark: f32
+    pub buy: Counter,
+    pub hold: Counter,
+    pub none: Counter,
+    pub sell: Counter,
+    pub overweight: Counter,
+    pub underweight: Counter,
+    pub scale_mark: f32
 }
 
 pub struct PriceTarget {
     pub target: PriceBounds,
     pub average: SmallMoney,
-    number_of_analysts: u32
+    pub number_of_analysts: Counter
 }
 
 pub struct EPSConsensus {
     pub consensus: SmallMoney,
-    number_of_estimates: u32,
-    fiscal_period: String,
-    fiscal_end_date: DateTime<Local>,
+    pub number_of_estimates: Counter,
+    pub fiscal_period: String,
+    pub fiscal_end_date: DateTime<Local>,
 }
 
 pub trait Peers {

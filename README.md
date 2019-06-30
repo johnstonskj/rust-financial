@@ -10,7 +10,7 @@ a given service provider. Thus, clients can use the common data model with
 Rust-native types and idioms but switch in different providers for different
 data types, markets, or qualities of service.
 
-## Library fin_model
+## Crate fin_model
 
 This library only provides types and traits that can be implemented by a 
 `Provider` that executes requests for financial data such as price quotes,
@@ -24,7 +24,7 @@ data and which use the common `RequestResult` response.
 * `::request` result types for requests
 * `::provider` the core trait implemented by providers of the request traits
 
-## Library fin_iex
+## Crate fin_iex
 
 This is an implementation of a number of the _request traits_ in `fin_model`
 calling the [IEX Cloud](https://iexcloud.io/).

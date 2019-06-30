@@ -1,3 +1,7 @@
+/*!
+NOT PUBLIC
+*/
+
 use std::env;
 
 use fin_model::request::RequestError;

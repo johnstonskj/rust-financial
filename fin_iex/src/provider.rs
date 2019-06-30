@@ -1,20 +1,52 @@
+/*!
+An Implementation of the Financial Model `Provider` trait for IEX.
+*/
+
+use std::collections::HashMap;
+
 use fin_model::provider::Provider;
 use fin_model::request::RequestResult;
 
 use crate::env;
 
-// ------------------------------------------------------------------------------------------------
-
+/// This is the provider type for IEX, it contains communication parameters
+/// and defaults used when making requests to the IEX endpoints.
 pub struct IEXProvider {
-    pub host: String,
-    pub version: String,
-    pub token: String,
-    pub default_currency: String
+    host: String,
+    version: String,
+    token: String,
+    default_currency: String
 }
 
 const ENV_HOST: &str = "IEX_HOST";
 const ENV_VERSION: &str = "IEX_VERSION";
 const ENV_TOKEN: &str = "IEX_TOKEN";
+
+impl IEXProvider {
+    /// Construct a valid URL from the endpoint path and any additional query
+    /// parameters, such as `format=json`.
+    pub fn make_api_url(&self, path: String, query_params: Option<HashMap<String, String>>) -> String {
+        let mut params: Vec<String> = match query_params {
+            Some(qp) => qp.iter().map(|e| format!("{}={}", e.0, e.1)).collect(),
+            None => Vec::new()
+        };
+        params.push(format!("token={}",self.token));
+        format!(
+            "https://{}.iexapis.com/{}/{}{}{}",
+            self.host,
+            self.version,
+            path,
+            if path.contains("?") { "&" } else { "?" },
+            params.join("&"))
+    }
+
+    /// The default currency used to format currency values.
+    pub fn get_default_currency(&self) -> &String {
+        &self.default_currency
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
 
 impl Provider for IEXProvider {
 
