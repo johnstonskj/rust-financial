@@ -1,5 +1,15 @@
 /*!
 Provides types and functions for market symbols.
+
+In general the `Symbol` type is loosely defined, it is stored as a `String`
+but there is little standardization across markets and geographies
+concerning length or character set. To this end the function `is_valid`
+simply takes the commonly known limits and returns true/false, although
+this should probably be _maybe true_/false.
+
+The macro [`assert_is_valid`](../macro.assert_is_valid.html) can be used by
+providers as it will do nothing if a symbol is valid but return a
+`request::RequestResult` if it is not.
 */
 
 /// Type for a market ticker symbol. Consumers of symbols should use
@@ -24,10 +34,24 @@ pub struct QualifiedSymbol {
 }
 
 /// Short-cut to test whether a `Symbol` is valid, and if not to return
-/// `RequestError::BadSymbolError`.
+/// a `RequestResult` containing the error `RequestError::BadSymbolError`.
 ///
-/// This macro requires that `is_valid` and `request::RequestError` are
+/// This macro *requires* that `is_valid` and `request::RequestError` are
 /// in scope where the assertion is made.
+/// ## Example
+///
+/// The following example shoes the use of the macro, and specifically the
+/// necessary imports.
+///
+/// ```rust
+/// use fin_model::request::{RequestError, RequestResult};
+/// use fin_model::symbol::is_valid;
+///
+/// fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<f32> {
+///     assert_is_valid!(for_symbol);
+///     Ok(0.0)
+/// }
+/// ```
 #[macro_export]
 macro_rules! assert_is_valid {
     ($symbol:expr) => {
