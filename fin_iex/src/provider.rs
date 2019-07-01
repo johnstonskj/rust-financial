@@ -9,6 +9,10 @@ use fin_model::request::RequestResult;
 
 use crate::env;
 
+// ------------------------------------------------------------------------------------------------
+// PUBLIC TYPES
+// ------------------------------------------------------------------------------------------------
+
 /// This is the provider type for IEX, it contains communication parameters
 /// and defaults used when making requests to the IEX endpoints.
 pub struct IEXProvider {
@@ -17,10 +21,6 @@ pub struct IEXProvider {
     token: String,
     default_currency: String
 }
-
-const ENV_HOST: &str = "IEX_HOST";
-const ENV_VERSION: &str = "IEX_VERSION";
-const ENV_TOKEN: &str = "IEX_TOKEN";
 
 impl IEXProvider {
     /// Construct a valid URL from the endpoint path and any additional query
@@ -47,6 +47,10 @@ impl IEXProvider {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+const ENV_HOST: &str = "IEX_HOST";
+const ENV_VERSION: &str = "IEX_VERSION";
+const ENV_TOKEN: &str = "IEX_TOKEN";
 
 impl Provider for IEXProvider {
 

@@ -13,6 +13,8 @@ use fin_model::symbol::is_valid;
 use crate::IEXProvider;
 use crate::request;
 
+// ------------------------------------------------------------------------------------------------
+
 impl FetchQuote for IEXProvider {
 
     fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<SmallMoney> {
@@ -32,11 +34,11 @@ impl FetchQuote for IEXProvider {
         }
     }
 
-    fn latest(&self, _for_symbol: Symbol) -> RequestResult<Quote> {
-        Err(RequestError::CommunicationError)
+    fn real_time(&self, for_symbol: Symbol) -> RequestResult<Quote> {
+        Err(RequestError::Unsupported)
     }
 
-    fn delayed(&self, _for_symbol: Symbol) -> RequestResult<QuotePrice> {
-        Err(RequestError::CommunicationError)
+    fn delayed(&self, for_symbol: Symbol) -> RequestResult<Quote> {
+        Err(RequestError::Unsupported)
     }
 }

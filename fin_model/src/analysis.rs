@@ -6,8 +6,11 @@ use steel_cent::SmallMoney;
 use chrono::{DateTime,Local};
 
 use crate::{Symbol, Snapshot, Bounded};
-use crate::quote::PriceBounds;
 use crate::request::RequestResult;
+
+// ------------------------------------------------------------------------------------------------
+// PUBLIC TYPES
+// ------------------------------------------------------------------------------------------------
 
 pub type Counter = u32;
 
@@ -22,7 +25,8 @@ pub struct Ratings {
 }
 
 pub struct PriceTarget {
-    pub target: PriceBounds,
+    pub high: SmallMoney,
+    pub low: SmallMoney,
     pub average: SmallMoney,
     pub number_of_analysts: Counter
 }
@@ -33,6 +37,10 @@ pub struct EPSConsensus {
     pub fiscal_period: String,
     pub fiscal_end_date: DateTime<Local>,
 }
+
+// ------------------------------------------------------------------------------------------------
+// PUBLIC TRAITS
+// ------------------------------------------------------------------------------------------------
 
 pub trait Peers {
     fn peers(&self, for_symbol: Symbol) -> RequestResult<Snapshot<Vec<Symbol>>>;

@@ -10,6 +10,10 @@ pub trait Peers {
 ```
 */
 
+// ------------------------------------------------------------------------------------------------
+// PUBLIC TYPES
+// ------------------------------------------------------------------------------------------------
+
 /// The common error responses returned from _request traits_.
 #[derive(Debug)]
 pub enum RequestError {
@@ -43,7 +47,15 @@ pub enum RequestError {
 
     /// The service provider is throttling requests, either globally or
     /// specifically for your identity.
-    RequestThrottled
+    RequestThrottled,
+
+    /// This can be used to indicate that a given operation is unsupported
+    /// by the `Provider`. This may mean that 1) it is not supported by the
+    /// service provider itself, 2) it is not _yet_ implemented by the
+    /// `Provider`, or 3) may never be implemented. A provider implementation
+    /// that returns this error should indicate in documentation why
+    /// this is the case.
+    Unsupported
 }
 
 /// The common `Result` returned from _request traits_; the success type is

@@ -6,6 +6,8 @@ use std::env;
 
 use fin_model::request::RequestError;
 
+// ------------------------------------------------------------------------------------------------
+
 pub fn missing_environment(env_key: &'static str) -> RequestError {
     RequestError::ConfigurationError(format!("no {} environment variable", env_key))
 }

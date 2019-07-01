@@ -12,6 +12,10 @@ providers as it will do nothing if a symbol is valid but return a
 `request::RequestResult` if it is not.
 */
 
+// ------------------------------------------------------------------------------------------------
+// PUBLIC TYPES
+// ------------------------------------------------------------------------------------------------
+
 /// Type for a market ticker symbol. Consumers of symbols should use
 /// `is_valid` to ensure the value they are provided is at least
 /// syntactically correct.
@@ -32,6 +36,10 @@ pub struct QualifiedSymbol {
     pub market: Symbol,
     pub symbol: Symbol
 }
+
+// ------------------------------------------------------------------------------------------------
+// MACROS
+// ------------------------------------------------------------------------------------------------
 
 /// Short-cut to test whether a `Symbol` is valid, and if not to return
 /// a `RequestResult` containing the error `RequestError::BadSymbolError`.

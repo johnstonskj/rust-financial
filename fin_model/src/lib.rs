@@ -22,26 +22,43 @@ functions that make a request for data and which use the common
 extern crate steel_cent;
 extern crate chrono;
 
-use chrono::{DateTime,Local};
+use std::time::Duration;
+
+use chrono::{DateTime, Local};
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
+/// The time zone associated with all `chrono::DateTime` instances.
+pub type ResponseTimezone = Local;
+
 /// A snapshot value; `data` with a `date`, usually the last updated
 /// or or calculated date and time.
 pub struct Snapshot<T> {
-    pub date: DateTime<Local>,
+    pub date: DateTime<ResponseTimezone>,
     pub data: T
 }
 
 /// A time-bounded value; `data` with a `start_date` and `end_date`
 /// signifying the range within which the data is considered valid.
 pub struct Bounded<T> {
-    pub start_date: DateTime<Local>,
-    pub end_date: DateTime<Local>,
+    pub start_date: DateTime<ResponseTimezone>,
+    pub end_date: DateTime<ResponseTimezone>,
     pub data: T
 }
+
+/// Represents a `series` of data points, over the time period indicated
+/// by `interval`, with values separated by `intra_interval`.
+pub struct Series<I, T> {
+    /// The interval over which time data is reported
+    pub interval: I,
+    /// The interval between data points within the overall `interval`
+    pub intra_interval: Duration,
+    /// The actual data points in increasing time order
+    pub series: Vec<Snapshot<T>>
+}
+
 
 // ------------------------------------------------------------------------------------------------
 // Public Modules
