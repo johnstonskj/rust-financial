@@ -16,7 +16,9 @@ Generated on:
   %d-%d-%d
 */
 
-use crate::exchange::ExchangeRegistration;
+use crate::ResponseTimezone;
+use crate::exchange::{MarketIdentifierRegistration,MarketRegistrationStatus};
+
 """ % (fetched, today.year, today.month, today.day))
     df = pd.read_excel(file_name, sheet_name=8, skiprows=2, header=None)
     write_date_fn(df.iat[0,1], "last_modified")
@@ -49,7 +51,7 @@ fn create_mic_table() -> HashMap<String,...> {
 }
 """)
 
-def get_field(row, fields, field, option=False):
+def get_field(row, fields, field, option=False, transformer=None):
     val = getattr(row, fields[field])
     if isinstance(val, float) and math.isnan(val) and not option:
         print("OH CRAP, field %s is a nan" % field)
@@ -57,8 +59,12 @@ def get_field(row, fields, field, option=False):
         sys.exit(-1)
     elif isinstance(val, float) and math.isnan(val) and option:
         return "None"
-    elif option:
+    elif option and not transformer is None:
+        return 'Some(%s)' % transformer(val)
+    elif option and transformer is None:
         return 'Some("%s")' % val
+    elif not transformer is None:
+        return transformer(val)
     return '"%s"' % val
     
 def write_data_from(file_name, from_sheet, fields):
@@ -72,17 +78,40 @@ def write_data_from(file_name, from_sheet, fields):
         print("            country: %s," % get_field(row, fields, 'country'))
         print("            mic: %s," % get_field(row, fields, 'mic'))
         print("            description: %s," % get_field(row, fields, 'description'))
-        print("            status: %s," % get_field(row, fields, 'status'))
+        print("            status: %s," % get_field(row, fields, 'status', True, make_status))
         
         print("            mic_type: %s," % get_field(row, fields, 'o_s', True))
         print("            city: %s," % get_field(row, fields, 'city', True))
         print("            operating_mic: %s," % get_field(row, fields, 'op_mic', True))
         print("            acronym: %s," % get_field(row, fields, 'acronym', True))
-        print("            website: %s," % get_field(row, fields, 'url', True))
-        print("            last_updated: %s," % get_field(row, fields, 'updated', True))
-        print("            created: %s," % get_field(row, fields, 'created', True))
-        print("            comments: %s" % get_field(row, fields, 'comments', True))
+        print("            website: %s," % get_field(row, fields, 'url', True, to_lower))
+        print("            last_updated: %s," % get_field(row, fields, 'updated', True, make_date))
+        print("            created: %s," % get_field(row, fields, 'created', True, make_date))
+        print("            comments: %s" % get_field(row, fields, 'comments', True, to_lower))
         print("        }),")
+
+def to_lower(s):
+    s.lower()
+
+MONTHS = {'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3,
+          'APRIL': 4, 'MAY': 5, 'JUNE': 6,
+          'JULY': 7, 'AUGUST': 8, 'SEPTEMBER': 9,
+          'OCTOBER': 10, 'NOVEMBER': 11, 'DECEMBER': 12}
+
+def make_date(s):
+    ds = s.split(' ')
+    if ds[0] == 'BEFORE':
+        return 'None'
+    else:
+        return 'ResponseTimezone.ymd(%s, %s, 1)' % (ds[1], MONTHS[ds[0]])
+
+def make_status(s):
+    if s == "ACTIVE":
+        return 'MarketRegistrationStatus::Active'
+    elif s == "DELETED":
+        return 'MarketRegistrationStatus::Deleted'
+    else:
+        return "None"
 
 if len(argv) < 3:
     print("usage: python %s fetch-date xls-file" % argv[0])
