@@ -11,3 +11,5 @@ Cargo.lock
 
 # Created by IntelliJ IDEA
 .idea
+
+scripts/*.xls

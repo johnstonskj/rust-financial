@@ -30,8 +30,11 @@ pub enum RatingType {
 
 /// The set of recommendation trends over some period of time.
 pub struct Ratings {
+    /// a mapping of available rating types to counts, not all types may be available
     pub ratings: HashMap<RatingType, Counter>,
+    /// a standardized represention of the consensus of recommendations
     pub scale_mark: Option<f32>,
+    ///
     pub averaged_over: Option<Duration>
 }
 
