@@ -1,24 +1,71 @@
 /*!
+Provides common types for reporting data.
+
+Primarily this module provides the `FinancialPeriod` type that can represent
+periods such as "Q2 2019", "H1 2018", or "2020". This period may be used as a
+calendar period where the assumption is that the periods are relative to
+January 1st, or as a fiscal period where the start of a fiscal year may not
+align with calendar years. For this latter case the `FiscalPeriod` struct
+also contains a date for the fiscal year start.
+
+The financial period type implements both `fmt::Display` and `str::FromStr`
+and so supports the ability to read and write the period as a string in a
+common manner.
 */
 
 use std::fmt;
 use std::fmt::Display;
 use std::str::FromStr;
 
+use chrono::DateTime;
 use regex::Regex;
+
+use crate::ResponseTimezone;
 
 // ------------------------------------------------------------------------------------------------
 // PUBLIC TYPES
 // ------------------------------------------------------------------------------------------------
 
+/// Represents common financial periods, whole years, half years, and quarter
+/// years.
+///
+/// By default the assumption is that periods represent calendar time;
+/// for example, the values "2019", "Q1 2019", and "H1 2019" are all assumed
+/// to start on January 1st.
 #[derive(Debug, PartialEq)]
 pub enum FinancialPeriod {
-    Quarter {quarter: u8, year: u16},
-    Half {half: u8, year: u16},
-    Year {year: u16}
+    Quarter {
+        /// the quarter within the year (values: 1..4)
+        quarter: u8,
+        /// the year itself (values: 1900..9999)
+        year: u16},
+    Half {
+        /// the half of the year (values: 1..2)
+        half: u8,
+        /// the year itself (values: 1900..9999)
+        year: u16},
+    Year {
+        /// the year itself (values: 1900..9999)
+        year: u16}
 }
 
+/// Represents a fiscal periods, with a reference start date, allowing it
+/// to represent years that do not align with the calendar start date.
+///
+/// For example, "Q1 2019" with a start date of April 1st ends on June 30th.
+#[derive(Debug, PartialEq)]
+pub struct FiscalPeriod {
+    /// the period within the fiscal year
+    pub period: FinancialPeriod,
+    /// the start date for the fiscal year
+    pub fiscal_year_start_date: DateTime<ResponseTimezone>
+}
+
+// ------------------------------------------------------------------------------------------------
+
 impl FinancialPeriod {
+    /// Validate the period to ensure that quarter, half, and year
+    /// values are within correct ranges.
     pub fn is_valid(&self) -> bool {
         match self {
             FinancialPeriod::Quarter {quarter, year} =>
@@ -37,8 +84,6 @@ fn is_valid_year(year: u16) -> bool {
     year >= 1900 && year <= 9999
 }
 
-// ------------------------------------------------------------------------------------------------
-
 impl Display for FinancialPeriod {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -52,10 +97,14 @@ impl Display for FinancialPeriod {
     }
 }
 
+/// Errors that can result from parsing a `FinancialPeriod` from a string.
 #[derive(Debug, PartialEq)]
 pub enum ParseError {
+    /// the string is empty
     EmptyString,
+    /// the string is syntactically invalid
     InvalidPeriodString,
+    /// the string parsed correctly but failed validation
     InvalidPeriodValue
 }
 
@@ -103,6 +152,8 @@ impl FromStr for FinancialPeriod {
         }
     }
 }
+
+// ------------------------------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
