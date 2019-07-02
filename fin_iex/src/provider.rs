@@ -26,11 +26,12 @@ impl IEXProvider {
     /// Construct a valid URL from the endpoint path and any additional query
     /// parameters, such as `format=json`.
     pub fn make_api_url(&self, path: String, query_params: Option<HashMap<String, String>>) -> String {
+        debug!("IEXProvider::make_api_url path: {}, query_params: {:?}", path, query_params);
         let mut params: Vec<String> = match query_params {
             Some(qp) => qp.iter().map(|e| format!("{}={}", e.0, e.1)).collect(),
             None => Vec::new()
         };
-        params.push(format!("token={}",self.token));
+        params.push(format!("token={}", self.token));
         format!(
             "https://{}.iexapis.com/{}/{}{}{}",
             self.host,
@@ -51,6 +52,8 @@ impl IEXProvider {
 const ENV_HOST: &str = "IEX_HOST";
 const ENV_VERSION: &str = "IEX_VERSION";
 const ENV_TOKEN: &str = "IEX_TOKEN";
+
+const DEFAULT_CURRENCY: &str = "USD";
 
 impl Provider for IEXProvider {
 
@@ -86,7 +89,9 @@ impl Provider for IEXProvider {
             }
             None => return Err(env::missing_environment(ENV_TOKEN))
         };
-        Ok(IEXProvider { host, version, token, default_currency: "USD".to_string() })
+        info!("IEXProvider::<Provider>::new host: {}, version: {}, token: {},default_currency: {}",
+               host, version, token, DEFAULT_CURRENCY);
+        Ok(IEXProvider { host, version, token, default_currency: DEFAULT_CURRENCY.to_string() })
     }
 
     fn attribution(&self) -> String {

@@ -3,7 +3,7 @@ extern crate log;
 extern crate flexi_logger;
 
 use fin_model::provider::Provider;
-use fin_model::quote::FetchQuote;
+use fin_model::quote::FetchPriceQuote;
 
 use fin_iex::IEXProvider;
 

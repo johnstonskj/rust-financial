@@ -15,9 +15,10 @@ use crate::request;
 
 // ------------------------------------------------------------------------------------------------
 
-impl FetchQuote for IEXProvider {
+impl FetchPriceQuote for IEXProvider {
 
     fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<SmallMoney> {
+        debug!("IEXProvider::<FetchPriceQuote>::latest_price_only for_symbol: {}", for_symbol);
         assert_is_valid!(for_symbol);
 
         let api_url = self.make_api_url(
@@ -35,10 +36,12 @@ impl FetchQuote for IEXProvider {
     }
 
     fn real_time(&self, for_symbol: Symbol) -> RequestResult<Quote> {
+        debug!("IEXProvider::<FetchPriceQuote>::real_time for_symbol: {}", for_symbol);
         Err(RequestError::Unsupported)
     }
 
     fn delayed(&self, for_symbol: Symbol) -> RequestResult<Quote> {
+        debug!("IEXProvider::<FetchPriceQuote>::delayed for_symbol: {}", for_symbol);
         Err(RequestError::Unsupported)
     }
 }

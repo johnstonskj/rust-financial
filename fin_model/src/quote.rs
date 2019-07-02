@@ -20,7 +20,7 @@ use chrono::DateTime;
 
 use steel_cent::SmallMoney;
 
-use crate::{Series, Snapshot, Symbol, ResponseTimezone};
+use crate::{ResponseTimezone, Series, Snapshot, Symbol};
 use crate::request::RequestResult;
 
 // ------------------------------------------------------------------------------------------------

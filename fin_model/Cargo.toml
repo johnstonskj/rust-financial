@@ -11,3 +11,5 @@ plugin = true
 [dependencies]
 chrono = "0.4.7"
 steel-cent = "0.2.2"
+
+#serde = { version = "1.0", features = ["derive"] }
