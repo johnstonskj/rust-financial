@@ -19,8 +19,11 @@ functions that make a request for data and which use the common
 `RequestResult` response.
 */
 
-extern crate steel_cent;
 extern crate chrono;
+#[macro_use]
+extern crate lazy_static;
+extern crate regex;
+extern crate steel_cent;
 
 use std::time::Duration;
 
@@ -54,14 +57,13 @@ pub struct Bounded<T> {
 /// by `interval`, with values separated by `intra_interval`.
 #[derive(Debug)]
 pub struct Series<I, T> {
-    /// The interval over which time data is reported
+    /// the interval over which time data is reported
     pub interval: I,
-    /// The interval between data points within the overall `interval`
+    /// the interval between data points within the overall `interval`
     pub intra_interval: Duration,
-    /// The actual data points in increasing time order
+    /// the actual data points in increasing time order
     pub series: Vec<Snapshot<T>>
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // Public Modules
@@ -69,11 +71,13 @@ pub struct Series<I, T> {
 
 pub mod symbol;
 
-pub use symbol::Symbol;
+pub use symbol::{Symbol, Symbols};
+
+pub mod analysis;
 
 pub mod quote;
 
-pub mod analysis;
+pub mod reporting;
 
 pub mod provider;
 

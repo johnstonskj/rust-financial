@@ -21,6 +21,7 @@ use chrono::DateTime;
 use steel_cent::SmallMoney;
 
 use crate::{ResponseTimezone, Series, Snapshot, Symbol};
+use crate::reporting::FinancialPeriod;
 use crate::request::RequestResult;
 
 // ------------------------------------------------------------------------------------------------
@@ -47,7 +48,7 @@ pub struct PriceRange {
     pub volume: Option<u64>
 }
 
-/// A returned, real-time or delayed, price quote
+/// A returned, real-time or delayed, price quote.
 pub struct QuotePrice {
     /// the current price
     pub price: SmallMoney,
@@ -62,7 +63,7 @@ pub struct QuotePrice {
 /// Represents a `QuotePrice` at a given point in time.
 pub type Quote = Snapshot<QuotePrice>;
 
-/// Common intervals for quote series data
+/// Common intervals for quote series data.
 pub enum SeriesInterval {
     Day,
     FiveDays,
@@ -122,4 +123,8 @@ pub trait FetchPriceRangeSeries {
     /// `start_date`. If the start_date is less than `interval` from the current
     /// date the series will be truncated.
     fn from(&self, for_symbol: Symbol, start_date: DateTime<ResponseTimezone>, interval: SeriesInterval) -> RequestResult<PriceRangeSeries>;
+
+    /// Return a series of prices for the specified financial period. The series
+    /// may be truncated if the period is not yet completed.
+    fn for_period(&self, for_symbol: Symbol, period: FinancialPeriod) -> RequestResult<PriceRangeSeries>;
 }

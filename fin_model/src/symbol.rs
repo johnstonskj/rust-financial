@@ -12,6 +12,8 @@ providers as it will do nothing if a symbol is valid but return a
 `request::RequestResult` if it is not.
 */
 
+use std::collections::HashSet;
+
 // ------------------------------------------------------------------------------------------------
 // PUBLIC TYPES
 // ------------------------------------------------------------------------------------------------
@@ -21,10 +23,13 @@ providers as it will do nothing if a symbol is valid but return a
 /// syntactically correct.
 pub type Symbol = String;
 
-/// Maximum length assuming a root length of 6 and a 2 character suffix
+/// Where a set of symbols are used together.
+pub type Symbols = HashSet<Symbol>;
+
+/// Maximum length assuming a root length of 6 and a 2 character suffix.
 pub const MAX_SYMBOL_LENGTH: usize = 8;
 
-/// is the symbol valid; currently only string lengths are checked
+/// is the symbol valid; currently only string lengths are checked.
 #[inline(always)]
 pub fn is_valid(symbol: Symbol) -> bool {
     symbol.len() >= 1 && symbol.len() <= MAX_SYMBOL_LENGTH
@@ -33,7 +38,9 @@ pub fn is_valid(symbol: Symbol) -> bool {
 /// Type for a qualified ticker symbol using the same format
 /// for the market and symbol itself.
 pub struct QualifiedSymbol {
+    /// the symbol for the market that qualifies `symbol`
     pub market: Symbol,
+    /// the target security symbol
     pub symbol: Symbol
 }
 
