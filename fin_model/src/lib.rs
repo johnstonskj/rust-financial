@@ -75,6 +75,8 @@ pub use symbol::{Symbol, Symbols};
 
 pub mod analysis;
 
+pub mod classify;
+
 pub mod exchange;
 
 pub mod quote;
