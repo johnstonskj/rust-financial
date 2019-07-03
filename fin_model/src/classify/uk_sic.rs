@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 
 use super::{Code, ClassificationScheme};
 

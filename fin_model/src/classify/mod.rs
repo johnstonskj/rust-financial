@@ -1,4 +1,4 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 
 #[derive(Debug, Clone)]
 pub struct Code<T> {
