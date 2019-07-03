@@ -39,6 +39,8 @@ data and which use the common `RequestResult` response.
   scheme.
 * `::classifiers::us_sic` the US [Standard Industrial Classification 
   (SIC)](https://www.sec.gov/info/edgar/siccodes.htm) scheme.
+* `::classifiers::naics` the [North American Industry Classification System 
+  (NAICS)](https://www.census.gov/eos/www/naics) scheme.
 * `::markets` an implementation of `MarketRegistry` to surface data from the 
   [ISO 10383 - Market Identifier Code](https://www.iso20022.org/10383/iso-10383-market-identifier-codes)
   standard for market codes.
