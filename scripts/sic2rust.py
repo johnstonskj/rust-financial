@@ -29,7 +29,7 @@ def to_lower(s):
     s.lower()
 
 if len(argv) < 2:
-    print("usage: python %s xls-file" % argv[0])
+    print("usage: python %s csv-file" % argv[0])
 else:
     file_name = argv[1]
     write_data_table(file_name)

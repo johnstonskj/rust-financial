@@ -42,6 +42,7 @@ impl ClassificationScheme<u32> for SIC {
         None
     }
 }
+
 // ------------------------------------------------------------------------------------------------
     
 fn create_data_table() -> HashMap<u32, Code<u32>> {
