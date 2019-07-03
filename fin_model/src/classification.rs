@@ -26,7 +26,3 @@ pub trait ClassificationScheme<T>
 
     fn get_children(&self, parent: T) -> Option<Vec<&Code<T>>>;
 }
-
-pub mod uk_sic;
-
-pub mod us_sic;

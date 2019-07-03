@@ -1,0 +1,9 @@
+[package]
+name = "fin_data"
+version = "0.1.0"
+authors = ["Simon Johnston <johnstonskj@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+fin_model = { path = "../fin_model" }
+chrono = "0.4.7"

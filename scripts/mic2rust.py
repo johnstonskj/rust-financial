@@ -20,18 +20,18 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use crate::exchange::{MarketIdentifierCode,MarketRegistrationStatus};
+use fin_model::market::{Market, MarketRegistry, MarketStatus};
 
 // ------------------------------------------------------------------------------------------------
 
-pub struct Registry {
-    codes: HashMap<String, MarketIdentifierCode>
+pub struct ISORegistry {
+    registry: HashMap<String, Market>
 }
 
-pub trait MICRegistry {
+impl MarketRegistry for ISORegistry {
 
     fn new() -> Self {
-        Registry { codes: create_data_table() }
+        ISORegistry { registry: create_data_table() }
     }
 
     fn name() -> String { "ISO 10383 - Market Identifier Code".to_string() }
@@ -40,10 +40,10 @@ pub trait MICRegistry {
 
     fn source() -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
 
-    fn governing_body() -> String { "ISO"}
+    fn governing_body() -> String { "ISO".to_string() }
 
-    fn get(&self, code: String) -> Option<MarketIdentifierCode> {
-        self.registry.get(code)
+    fn get(&self, code: String) -> Option<&Market> {
+        self.registry.get(&code)
     }""" % (fetched, today.year, today.month, today.day))
     df = pd.read_excel(file_name, sheet_name=8, skiprows=2, header=None)
     write_date_fn(df.iat[0,1], "last_updated")
@@ -61,10 +61,9 @@ def write_data_table(file_name):
     print("""
 // ------------------------------------------------------------------------------------------------
 
-fn create_data_table() -> HashMap<String, MarketIdentifierCode> {
-    let table: HashMap<String, MarketIdentifierCode> = 
-    [
-""")
+fn create_data_table() -> HashMap<String, Market> {
+    let table: HashMap<String, Market> = 
+    [""")
     write_data_from(file_name, 0,
                     {'country': 'COUNTRY', 'country_code': '_2', 'mic': 'MIC', 'op_mic': '_4',
                      'o_s': '_5', 'description': '_6', 'acronym': 'ACRONYM', 'city': 'CITY',
@@ -90,7 +89,11 @@ def get_field(row, fields, field, option=False, transformer=None):
     elif isinstance(val, float) and math.isnan(val) and option:
         return "None"
     elif option and not transformer is None:
-        return 'Some(%s)' % transformer(val)
+        new_val = transformer(val)
+        if new_val == 'None':
+            return new_val
+        else:
+            return 'Some(%s)' % new_val
     elif option and transformer is None:
         return 'Some("%s".to_string())' % val
     elif not transformer is None:
@@ -103,7 +106,7 @@ def write_data_from(file_name, from_sheet, fields):
                                   '-NaN', '-nan', '1.#IND', '1.#QNAN', 'N/A', 'NULL',
                                   'NaN', 'n/a', 'nan', 'null'])
     for row in df.itertuples():
-        print("        (%s.to_string(), MarketIdentifierCode {" % get_field(row, fields, 'mic'))
+        print("        (%s.to_string(), Market {" % get_field(row, fields, 'mic'))
         print("            country_code: %s.to_string()," % get_field(row, fields, 'country_code'))
         print("            country: %s.to_string()," % get_field(row, fields, 'country'))
         print("            mic: %s.to_string()," % get_field(row, fields, 'mic'))
@@ -121,7 +124,7 @@ def write_data_from(file_name, from_sheet, fields):
         print("        }),")
 
 def to_lower(s):
-    return '"%s".to_string()' % s.lower()
+    return '"%s".to_string()' % s.lower().replace('"', '\\"')
 
 MONTHS = {'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3,
           'APRIL': 4, 'MAY': 5, 'JUNE': 6,
@@ -137,11 +140,11 @@ def make_date(s):
 
 def make_status(s):
     if s == "ACTIVE":
-        return 'MarketRegistrationStatus::Active'
+        return 'MarketStatus::Active'
     elif s == "DELETED":
-        return 'MarketRegistrationStatus::Deleted'
+        return 'MarketStatus::Deleted'
     else:
-        return "None"
+        return 'MarketStatus::NotOperational'
 
 if len(argv) < 3:
     print("usage: python %s fetch-date xls-file" % argv[0])

@@ -2,5 +2,6 @@
 
 members = [
     "fin_model",
+    "fin_data",
     "fin_iex",
 ]

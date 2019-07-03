@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use super::{Code, ClassificationScheme};
+use fin_model::classification::{Code, ClassificationScheme};
 
 pub struct SIC {
     codes: HashMap<u32, Code<u32>>
