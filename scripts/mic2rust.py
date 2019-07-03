@@ -20,26 +20,49 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use crate::exchange::{MarketIdentifierRegistration,MarketRegistrationStatus};
+use crate::exchange::{MarketIdentifierCode,MarketRegistrationStatus};
 
 // ------------------------------------------------------------------------------------------------
-""" % (fetched, today.year, today.month, today.day))
+
+pub struct Registry {
+    codes: HashMap<String, MarketIdentifierCode>
+}
+
+pub trait MICRegistry {
+
+    fn new() -> Self {
+        Registry { codes: create_data_table() }
+    }
+
+    fn name() -> String { "ISO 10383 - Market Identifier Code".to_string() }
+
+    fn acronym() -> String { "MIC".to_string() }
+
+    fn source() -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
+
+    fn governing_body() -> String { "ISO"}
+
+    fn get(&self, code: String) -> Option<MarketIdentifierCode> {
+        self.registry.get(code)
+    }""" % (fetched, today.year, today.month, today.day))
     df = pd.read_excel(file_name, sheet_name=8, skiprows=2, header=None)
-    write_date_fn(df.iat[0,1], "last_modified")
+    write_date_fn(df.iat[0,1], "last_updated")
     write_date_fn(df.iat[1,1], "next_publication")
+    print("""
+}""")
 
 def write_date_fn(date, name):
     print("""
-pub fn get_%s() -> NaiveDate {
-    NaiveDate::from_ymd(%d, %d, %d)
-}""" % (name, date.year, date.month, date.day))
+    fn %s() -> NaiveDate {
+        NaiveDate::from_ymd(%d, %d, %d)
+    }""" % (name, date.year, date.month, date.day))
 
 def write_data_table(file_name):
     print("""
 // ------------------------------------------------------------------------------------------------
 
-fn create_mic_table() -> HashMap<String, MarketIdentifierRegistration> {
-    let table: HashMap<String, MarketIdentifierRegistration> = 
+fn create_data_table() -> HashMap<String, MarketIdentifierCode> {
+    let table: HashMap<String, MarketIdentifierCode> = 
     [
 """)
     write_data_from(file_name, 0,
@@ -80,7 +103,7 @@ def write_data_from(file_name, from_sheet, fields):
                                   '-NaN', '-nan', '1.#IND', '1.#QNAN', 'N/A', 'NULL',
                                   'NaN', 'n/a', 'nan', 'null'])
     for row in df.itertuples():
-        print("        (%s.to_string(), ExchangeRegistration {" % get_field(row, fields, 'mic'))
+        print("        (%s.to_string(), MarketIdentifierCode {" % get_field(row, fields, 'mic'))
         print("            country_code: %s.to_string()," % get_field(row, fields, 'country_code'))
         print("            country: %s.to_string()," % get_field(row, fields, 'country'))
         print("            mic: %s.to_string()," % get_field(row, fields, 'mic'))

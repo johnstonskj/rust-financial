@@ -1,10 +1,11 @@
+/*!
+*/
 
-// [ISO 10383 Market Identifier Codes](https://www.iso20022.org/10383/iso-10383-market-identifier-codes)
-pub type MIC = String;
+use chrono::NaiveDate;
 
 pub struct Exchange {
-    pub mic: MIC,
-    pub region: [char;2],
+    pub mic: String,
+    pub country_code: String,
     pub description: String,
 
     pub abbreviation: String,
@@ -17,10 +18,12 @@ pub enum MarketRegistrationStatus {
     Deleted
 }
 
-pub struct MarketIdentifierRegistration {
+// [ISO 10383 Market Identifier Codes](https://www.iso20022.org/10383/iso-10383-market-identifier-codes)
+
+pub struct MarketIdentifierCode {
+    pub mic: String,
     pub country_code: String,
     pub country: String,
-    pub mic: String,
     pub description: String,
     pub status: String,
 
@@ -32,6 +35,25 @@ pub struct MarketIdentifierRegistration {
     pub last_updated: Option<String>,
     pub created: Option<String>,
     pub comments: Option<String>
+}
+
+pub trait MICRegistry {
+
+    fn new() -> Self;
+
+    fn name() -> String;
+
+    fn acronym() -> String;
+
+    fn source() -> String;
+
+    fn governing_body() -> Option<String>;
+
+    fn last_updated() -> NaiveDate;
+
+    fn next_publication() -> NaiveDate;
+
+    fn get(&self, code: String) -> Option<MarketIdentifierCode>;
 }
 
 // ------------------------------------------------------------------------------------------------

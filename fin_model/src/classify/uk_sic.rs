@@ -4,7 +4,7 @@ use chrono::NaiveDate;
 
 use super::{Code, ClassificationScheme};
 
-struct SIC {
+pub struct SIC {
     codes: HashMap<u32, Code<u32>>
 }
 
