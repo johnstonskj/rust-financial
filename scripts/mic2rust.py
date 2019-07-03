@@ -16,9 +16,13 @@ Generated on:
   %d-%d-%d
 */
 
-use crate::ResponseTimezone;
+use std::collections::HashMap;
+
+use chrono::NaiveDate;
+
 use crate::exchange::{MarketIdentifierRegistration,MarketRegistrationStatus};
 
+// ------------------------------------------------------------------------------------------------
 """ % (fetched, today.year, today.month, today.day))
     df = pd.read_excel(file_name, sheet_name=8, skiprows=2, header=None)
     write_date_fn(df.iat[0,1], "last_modified")
@@ -26,14 +30,16 @@ use crate::exchange::{MarketIdentifierRegistration,MarketRegistrationStatus};
 
 def write_date_fn(date, name):
     print("""
-pub fn get_%s() -> DateTime<Local> {
-    Local.ymd(%d, %d, %d)
+pub fn get_%s() -> NaiveDate {
+    NaiveDate::from_ymd(%d, %d, %d)
 }""" % (name, date.year, date.month, date.day))
 
 def write_data_table(file_name):
     print("""
-fn create_mic_table() -> HashMap<String,...> {
-    let table: HashMap<String,...> = 
+// ------------------------------------------------------------------------------------------------
+
+fn create_mic_table() -> HashMap<String, MarketIdentifierRegistration> {
+    let table: HashMap<String, MarketIdentifierRegistration> = 
     [
 """)
     write_data_from(file_name, 0,
@@ -48,6 +54,7 @@ fn create_mic_table() -> HashMap<String,...> {
                      'created': '_12', 'comments': 'COMMENTS'})
     print("""
     ].iter().cloned().collect();
+    table
 }
 """)
 
@@ -62,7 +69,7 @@ def get_field(row, fields, field, option=False, transformer=None):
     elif option and not transformer is None:
         return 'Some(%s)' % transformer(val)
     elif option and transformer is None:
-        return 'Some("%s")' % val
+        return 'Some("%s".to_string())' % val
     elif not transformer is None:
         return transformer(val)
     return '"%s"' % val
@@ -73,11 +80,11 @@ def write_data_from(file_name, from_sheet, fields):
                                   '-NaN', '-nan', '1.#IND', '1.#QNAN', 'N/A', 'NULL',
                                   'NaN', 'n/a', 'nan', 'null'])
     for row in df.itertuples():
-        print("        (%s, ExchangeRegistration {" % get_field(row, fields, 'mic'))
-        print("            country_code: %s," % get_field(row, fields, 'country_code'))
-        print("            country: %s," % get_field(row, fields, 'country'))
-        print("            mic: %s," % get_field(row, fields, 'mic'))
-        print("            description: %s," % get_field(row, fields, 'description'))
+        print("        (%s.to_string(), ExchangeRegistration {" % get_field(row, fields, 'mic'))
+        print("            country_code: %s.to_string()," % get_field(row, fields, 'country_code'))
+        print("            country: %s.to_string()," % get_field(row, fields, 'country'))
+        print("            mic: %s.to_string()," % get_field(row, fields, 'mic'))
+        print("            description: %s.to_string()," % get_field(row, fields, 'description'))
         print("            status: %s," % get_field(row, fields, 'status', True, make_status))
         
         print("            mic_type: %s," % get_field(row, fields, 'o_s', True))
@@ -91,7 +98,7 @@ def write_data_from(file_name, from_sheet, fields):
         print("        }),")
 
 def to_lower(s):
-    s.lower()
+    return '"%s".to_string()' % s.lower()
 
 MONTHS = {'JANUARY': 1, 'FEBRUARY': 2, 'MARCH': 3,
           'APRIL': 4, 'MAY': 5, 'JUNE': 6,
@@ -103,7 +110,7 @@ def make_date(s):
     if ds[0] == 'BEFORE':
         return 'None'
     else:
-        return 'ResponseTimezone.ymd(%s, %s, 1)' % (ds[1], MONTHS[ds[0]])
+        return 'NaiveDate::from_ymd(%s, %s, 1)' % (ds[1], MONTHS[ds[0]])
 
 def make_status(s):
     if s == "ACTIVE":
