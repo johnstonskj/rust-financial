@@ -1,9 +1,14 @@
 language: rust
+sudo: false
 
 rust:
   - stable
   - beta
   - nightly
+
+os:
+  - linux
+  - osx
 
 matrix:
   allow_failures:
