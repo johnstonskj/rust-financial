@@ -4,7 +4,7 @@ An implementation of a number of the _request traits_ in the
 
 ## Example
 
-```rust
+```no_run
 use fin_iex::IEXProvider;
 
 use fin_model::provider::Provider;
