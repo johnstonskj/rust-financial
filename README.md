@@ -5,13 +5,13 @@
 ![mit License](https://img.shields.io/badge/license-mit-118811.svg)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rust-financial.svg)](https://github.com/johnstonskj/rust-financial/stargazers)
 
-A comprehensive data model for various financial data, with implementation 
-using IEX.
+A comprehensive data model for various financial data, with a partial 
+implementation using IEX as a service provider.
 
 The purpose of this project is to construct a comprehensive data model, not of 
-a specific API but the _right_ model we would hope to see. This model can
-then be populated using requests described with traits and implemented by
-a given service provider. Thus, clients can use the common data model with
+a specific API but the _right_ model we would like for financial data. This 
+model can then be populated using requests described with traits and implemented 
+by different service providers. Thus, clients can use the common data model with
 Rust-native types and idioms but switch in different providers for different
 data types, markets, or qualities of service.
 
