@@ -23,7 +23,7 @@ use regex::Regex;
 use crate::ResponseTimezone;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types
 // ------------------------------------------------------------------------------------------------
 
 /// Represents common financial periods, whole years, half years, and quarter

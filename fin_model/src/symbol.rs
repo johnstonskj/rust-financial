@@ -15,7 +15,7 @@ providers as it will do nothing if a symbol is valid but return a
 use std::collections::HashSet;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types
 // ------------------------------------------------------------------------------------------------
 
 /// Type for a market ticker symbol. Consumers of symbols should use
@@ -45,7 +45,7 @@ pub struct QualifiedSymbol {
 }
 
 // ------------------------------------------------------------------------------------------------
-// MACROS
+// Macros
 // ------------------------------------------------------------------------------------------------
 
 /// Short-cut to test whether a `Symbol` is valid, and if not to return

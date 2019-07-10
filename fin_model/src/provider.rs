@@ -10,7 +10,7 @@ instantiates a specific service provider.
 use crate::request::RequestResult;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TRAITS
+// Public Traits
 // ------------------------------------------------------------------------------------------------
 
 /// This trait allows a client to create a provider instance as

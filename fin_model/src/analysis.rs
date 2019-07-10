@@ -13,7 +13,7 @@ use crate::request::RequestResult;
 use crate::reporting::FinancialPeriod;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types
 // ------------------------------------------------------------------------------------------------
 
 /// Used to count things.
@@ -55,7 +55,7 @@ pub struct EPSConsensus {
 }
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TRAITS
+// Public Traits
 // ------------------------------------------------------------------------------------------------
 
 /// This trait is implemented by providers to return a set of symbols that are expected
