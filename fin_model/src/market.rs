@@ -37,7 +37,6 @@ pub struct Market {
 // ------------------------------------------------------------------------------------------------
 
 pub trait MarketRegistry {
-pub trait MarketRegistry {
 
     fn new() -> Self;
 
