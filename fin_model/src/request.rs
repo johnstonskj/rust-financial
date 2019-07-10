@@ -11,7 +11,7 @@ pub trait Peers {
 */
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types
 // ------------------------------------------------------------------------------------------------
 
 /// The common error responses returned from _request traits_.
@@ -62,3 +62,22 @@ pub enum RequestError {
 /// unspecified but the error is always `RequestError`.
 pub type RequestResult<T> = Result<T, RequestError>;
 
+impl RequestError {
+
+    pub fn from_u16(code: u16) -> Option<Self> {
+        match code {
+            100...299 => None,
+
+            401 | 407 => Some(RequestError::AuthenticationError),
+            403 | 451 => Some(RequestError::AuthorizationError),
+            400 | 404...406 | 411...417 | 426...428 | 431 => Some(RequestError::BadRequestError),
+            429 => Some(RequestError::RequestThrottled),
+
+            501 => Some(RequestError::Unsupported),
+            505 | 506 => Some(RequestError::BadRequestError),
+            511 => Some(RequestError::AuthorizationError),
+
+            _ => Some(RequestError::CommunicationError)
+        }
+    }
+}
