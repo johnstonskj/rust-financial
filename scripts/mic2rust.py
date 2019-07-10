@@ -60,6 +60,8 @@ def write_date_fn(date, name):
 def write_data_table(file_name):
     print("""
 // ------------------------------------------------------------------------------------------------
+// Generated Data Table
+// ------------------------------------------------------------------------------------------------
 
 fn create_data_table() -> HashMap<String, Market> {
     let table: HashMap<String, Market> = 

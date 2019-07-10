@@ -6,6 +6,8 @@ import pandas as pd
 def write_data_table(file_name):
     print("""
 // ------------------------------------------------------------------------------------------------
+// Generated Data Table
+// ------------------------------------------------------------------------------------------------
     
 fn create_data_table() -> HashMap<u32, Code<u32>> {
     let table: HashMap<u32, Code<u32>> = 
