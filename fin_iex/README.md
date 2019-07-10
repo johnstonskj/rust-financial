@@ -6,3 +6,6 @@ calling the [IEX Cloud](https://iexcloud.io/).
 * `fin_iex` simply exports the `IEXProvider` type from `::provider`
 * `::provider` provides an implementation of the `Provider` trait and a set of 
   request traits from `fin_model`
+
+Currently this implementation only covers the `FetchPriceQuote` trait from the
+`fin_model` interface.

@@ -25,7 +25,7 @@ use crate::reporting::FinancialPeriod;
 use crate::request::RequestResult;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types
 // ------------------------------------------------------------------------------------------------
 
 /// A price range indicates a high and low value within the open and close
@@ -55,13 +55,44 @@ pub struct QuotePrice {
     /// the (optional) change in currency, since the last close
     pub change: Option<SmallMoney>,
     /// the (optional) change, in percentage, since the last close
-    pub percentage: Option<f32>,
-    /// the (optional) extended trading price
-    pub extended: Option<Snapshot<SmallMoney>>
+    pub percentage: Option<f64>,
+}
+
+/// A returned, delayed full quote quote.
+pub struct QuotePriceDelayed {
+    /// the latest price
+    pub latest: QuotePrice,
+    /// number of minutes of delay (average)
+    pub delayed_by: u16,
+    /// highest price within the market window
+    pub high: SmallMoney,
+    /// lowest price within the market window
+    pub low: SmallMoney,
+    /// the (optional) number of trades at this latest price
+    pub trade_size: Option<u64>,
+    /// the (optional) volume of trading within the market window
+    pub volume: Option<u64>,
+    /// the (optional) previous close date
+    pub previous_close_date: Option<DateTime<ResponseTimezone>>,
+}
+
+pub type DelayedQuote = Snapshot<QuotePriceDelayed>;
+
+pub struct QuotePriceFull {
+    /// the range of prices for the trading day
+    pub range: PriceRange,
+    /// the latest price
+    pub latest: QuotePrice,
+    /// the (optional) number of trades at this latest price
+    pub trade_size: Option<u64>,
+    /// the (optional) previous close date
+    pub previous_close_date: Option<DateTime<ResponseTimezone>>,
+    /// the (optional) price during extended trading
+    pub extended: Option<QuotePrice>
 }
 
 /// Represents a `QuotePrice` at a given point in time.
-pub type Quote = Snapshot<QuotePrice>;
+pub type Quote = Snapshot<QuotePriceFull>;
 
 /// Common intervals for quote series data.
 pub enum SeriesInterval {
@@ -80,7 +111,7 @@ pub enum SeriesInterval {
 pub type PriceRangeSeries = Series<SeriesInterval, PriceRange>;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TRAITS
+// Public Traits
 // ------------------------------------------------------------------------------------------------
 
 /// This trait is implemented by providers that are able to provide price quotes
@@ -101,7 +132,7 @@ pub trait FetchPriceQuote {
 
     /// Return a delayed price, or `RequestError::Unsupported` if the service
     /// provider does not provide delayed prices.
-    fn delayed(&self, for_symbol: Symbol) -> RequestResult<Quote>;
+    fn delayed(&self, for_symbol: Symbol) -> RequestResult<DelayedQuote>;
 }
 
 /// This trait is implemented by providers that are able to provide price data

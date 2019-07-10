@@ -1,16 +1,30 @@
 /*!
 An Implementation of the Financial Model `Provider` trait for IEX.
+
+Note that this implementation uses a number of environment variables
+for configuration of the IEX endpoint URL.
+
+```bash
+$ export IEX_HOST=cloud
+$ export IEX_VERSION=stable
+$ export RUST_LOG=info
+$
+$ IEX_TOKEN={your-dev-token} cargo run iext
+```
+
 */
 
 use std::collections::HashMap;
 
+use steel_cent::currency::with_code;
+
 use fin_model::provider::Provider;
-use fin_model::request::RequestResult;
+use fin_model::request::{RequestError, RequestResult};
 
 use crate::env;
 
 // ------------------------------------------------------------------------------------------------
-// PUBLIC TYPES
+// Public Types & Traits
 // ------------------------------------------------------------------------------------------------
 
 /// This is the provider type for IEX, it contains communication parameters
@@ -48,6 +62,8 @@ impl IEXProvider {
 }
 
 // ------------------------------------------------------------------------------------------------
+// Trait Implementations
+// ------------------------------------------------------------------------------------------------
 
 const ENV_HOST: &str = "IEX_HOST";
 const ENV_VERSION: &str = "IEX_VERSION";
@@ -62,6 +78,7 @@ impl Provider for IEXProvider {
         let host = match env::get_from_environment(ENV_HOST, Some("cloud".to_string())) {
             Some(host) => {
                 if host == "cloud" || host == "sandbox" {
+                    debug!("setting IEX host to {}", host);
                     host
                 } else {
                     return Err(env::invalid_environment(ENV_HOST, host))
@@ -72,6 +89,7 @@ impl Provider for IEXProvider {
         let version = match env::get_from_environment(ENV_VERSION, Some("stable".to_string())) {
             Some(version) => {
                 if version == "stable" || host == "beta" {
+                    debug!("setting IEX version to {}", version);
                     version
                 } else {
                     return Err(env::invalid_environment(ENV_VERSION, version))
@@ -82,6 +100,7 @@ impl Provider for IEXProvider {
         let token = match env::get_from_environment(ENV_TOKEN, None) {
             Some(token) => {
                 if token.starts_with("Tpk_") || token.starts_with("pk_") || token.starts_with("sk_") {
+                    debug!("setting IEX version to <<private>>");
                     token
                 } else {
                     return Err(env::invalid_environment(ENV_TOKEN, token))
@@ -89,6 +108,10 @@ impl Provider for IEXProvider {
             }
             None => return Err(env::missing_environment(ENV_TOKEN))
         };
+        match with_code(DEFAULT_CURRENCY) {
+            Some(_) => (),
+            None => return Err(RequestError::ConfigurationError(format!("invalid currency code: {}", DEFAULT_CURRENCY)))
+        }
         info!("IEXProvider::<Provider>::new host: {}, version: {}, token: {},default_currency: {}",
                host, version, token, DEFAULT_CURRENCY);
         Ok(IEXProvider { host, version, token, default_currency: DEFAULT_CURRENCY.to_string() })

@@ -24,6 +24,12 @@ extern crate log;
 extern crate steel_cent;
 extern crate chrono;
 extern crate reqwest;
+extern crate serde;
+extern crate serde_json;
+
+#[macro_use]
+extern crate lazy_static;
+extern crate regex;
 
 #[macro_use]
 extern crate fin_model;
@@ -37,10 +43,14 @@ pub mod provider;
 pub use provider::IEXProvider;
 
 // ------------------------------------------------------------------------------------------------
-// Private Modules
+// Trait Implementation Modules
 // ------------------------------------------------------------------------------------------------
 
 mod quote;
+
+// ------------------------------------------------------------------------------------------------
+// Private Modules
+// ------------------------------------------------------------------------------------------------
 
 mod env;
 
