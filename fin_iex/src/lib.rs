@@ -26,6 +26,7 @@ extern crate chrono;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
+extern crate num_format;
 
 #[macro_use]
 extern crate lazy_static;

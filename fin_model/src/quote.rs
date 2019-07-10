@@ -78,11 +78,21 @@ pub struct QuotePriceDelayed {
 
 pub type DelayedQuote = Snapshot<QuotePriceDelayed>;
 
+pub enum QuoteSource {
+    RealTime,
+    Delayed,
+    Close,
+    PreviousClose,
+    Unknown
+}
+
 pub struct QuotePriceFull {
     /// the range of prices for the trading day
     pub range: PriceRange,
     /// the latest price
     pub latest: QuotePrice,
+    /// the source method for `latest`
+    pub latest_source: QuoteSource,
     /// the (optional) number of trades at this latest price
     pub trade_size: Option<u64>,
     /// the (optional) previous close date

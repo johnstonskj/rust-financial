@@ -2,6 +2,8 @@
 extern crate log;
 extern crate flexi_logger;
 
+use num_format::{SystemLocale, ToFormattedString};
+
 use fin_model::provider::Provider;
 use fin_model::quote::FetchPriceQuote;
 use fin_model::request::RequestError;
@@ -34,6 +36,8 @@ fn main() {
         }
     };
 
+    let locale = SystemLocale::default().unwrap();
+
     match cmd {
         Command::Price(symbol) => {
             match provider.latest_price_only(symbol) {
@@ -51,7 +55,16 @@ fn main() {
                     println!("Call failed: {:?}", e);
                 },
                 Ok(q) => {
-                    println!("Delayed price: {}", q.data.latest.price)
+                    println!("Delayed price: {} (by {} minutes)",
+                             q.data.latest.price,
+                             q.data.delayed_by);
+                    println!(" Price Ranges: {} ... {} @ {}",
+                             q.data.low,
+                             q.data.high,
+                             match q.data.volume {
+                                 None => "N/A".to_string(),
+                                 Some(v) => v.to_formatted_string(&locale)
+                             });
                 }
             }
         },
@@ -61,7 +74,25 @@ fn main() {
                     println!("Call failed: {:?}", e);
                 },
                 Ok(q) => {
-                    println!("Real-Time price: {}", q.data.latest.price)
+                    println!("Real-Time price: {} ({} {}%), updated {}",
+                             q.data.latest.price,
+                             q.data.latest.change.unwrap(),
+                             q.data.latest.percentage.unwrap(),
+                             q.date);
+//                             q.data.latest_source);
+                    println!("   Price Ranges: {} {} ... {} {} @ {})",
+                             q.data.range.open,
+                             q.data.range.low,
+                             q.data.range.high,
+                             q.data.range.close,
+                             match q.data.range.volume {
+                                 None => "N/A".to_string(),
+                                 Some(v) => v.to_formatted_string(&locale)
+                             });
+                    if let Some(extended) = q.data.extended {
+                        println!(" Extended price: {}",
+                                 extended.price);
+                    }
                 }
             }
         },

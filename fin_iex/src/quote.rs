@@ -5,12 +5,9 @@ NOT PUBLIC
 use chrono::prelude::*;
 
 use steel_cent::SmallMoney;
-use steel_cent::currency::with_code;
 
 use serde;
 use serde::{Serialize, Deserialize};
-
-use regex::Regex;
 
 use fin_model::Symbol;
 use fin_model::quote::*;
@@ -147,6 +144,7 @@ impl FetchPriceQuote for IEXProvider {
                             change: Some(price_from_float(dc, quote.change)?),
                             percentage: Some(quote.change_percent)
                         },
+                        latest_source: source_from_string(&quote.latest_source),
                         trade_size: None,
                         previous_close_date: None,
                         extended: Some(QuotePrice {
@@ -204,6 +202,24 @@ impl FetchPriceQuote for IEXProvider {
 // ------------------------------------------------------------------------------------------------
 // Private
 // ------------------------------------------------------------------------------------------------
+
+use regex::Regex;
+
+use steel_cent::currency::with_code;
+
+fn source_from_string(src: &String) -> QuoteSource {
+    if src == "IEX real time price" {
+        QuoteSource::RealTime
+    } else if src == "15 minute delayed price" {
+        QuoteSource::Delayed
+    } else if src == "Close" {
+        QuoteSource::Close
+    } else if src == "Previous close" {
+        QuoteSource::PreviousClose
+    } else {
+        QuoteSource::Unknown
+    }
+}
 
 fn date_from_timestamp(ts: f64) -> RequestResult<DateTime<Local>> {
     Ok(Local.timestamp_millis(ts.trunc() as i64))
