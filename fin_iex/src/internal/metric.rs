@@ -51,6 +51,6 @@ pub fn record_api_usage(api: ApiName, count: u16) {
 }
 
 pub fn record_to_log() {
-    debug!("commiting metrics to log");
+    debug!("committing metrics to log");
     EXPORTER.turn();
 }

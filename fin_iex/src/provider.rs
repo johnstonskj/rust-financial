@@ -21,8 +21,8 @@ use steel_cent::currency::with_code;
 use fin_model::provider::Provider;
 use fin_model::request::{RequestError, RequestResult};
 
-use crate::env;
-use crate::metric;
+use crate::internal::env;
+use crate::internal::metric;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types & Traits

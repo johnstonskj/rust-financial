@@ -53,11 +53,4 @@ mod quote;
 // Private Implementation Modules
 // ------------------------------------------------------------------------------------------------
 
-mod convert;
-
-mod env;
-
-mod metric;
-
-mod request;
-
+mod internal;

@@ -13,9 +13,9 @@ use fin_model::request::{RequestError, RequestResult};
 use fin_model::symbol::is_valid;
 
 use crate::IEXProvider;
-use crate::convert::*;
-use crate::metric::{ApiName, record_api_use};
-use crate::request;
+use crate::internal::convert::*;
+use crate::internal::metric::{ApiName, record_api_use};
+use crate::internal::request;
 
 // ------------------------------------------------------------------------------------------------
 // API Types (internal)
