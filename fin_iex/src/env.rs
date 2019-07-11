@@ -1,5 +1,5 @@
 /*!
-NOT PUBLIC
+Environment variable wrappers.
 */
 
 use std::env;

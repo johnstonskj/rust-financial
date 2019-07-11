@@ -1,5 +1,5 @@
 /*!
-NOT PUBLIC
+IEX API wrapper
 */
 
 use steel_cent::SmallMoney;

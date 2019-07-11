@@ -1,5 +1,5 @@
 /*!
-NOT PUBLIC
+REST API details
 */
 
 use reqwest;

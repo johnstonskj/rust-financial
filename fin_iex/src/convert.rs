@@ -1,6 +1,6 @@
-// ------------------------------------------------------------------------------------------------
-// Private
-// ------------------------------------------------------------------------------------------------
+/*!
+Conversion functions from IEX to fin_model structures.
+*/
 
 use chrono::prelude::*;
 
@@ -11,6 +11,10 @@ use regex::Regex;
 
 use fin_model::quote::*;
 use fin_model::request::{RequestError, RequestResult};
+
+// ------------------------------------------------------------------------------------------------
+// Public Functions
+// ------------------------------------------------------------------------------------------------
 
 pub fn source_from_string(src: &String) -> QuoteSource {
     if src == "IEX real time price" {

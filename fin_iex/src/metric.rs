@@ -1,3 +1,7 @@
+/*!
+Wrapper around the external metrics crate.
+*/
+
 use std::collections::HashMap;
 
 use log::Level;
@@ -31,16 +35,22 @@ lazy_static! {
         Level::Info);
 }
 
+// ------------------------------------------------------------------------------------------------
+// Public Functions
+// ------------------------------------------------------------------------------------------------
+
 pub fn record_api_use(api: ApiName) {
     record_api_usage(api, 1)
 }
 
 pub fn record_api_usage(api: ApiName, count: u16) {
+    debug!("recording API usage for {:?} x {}", api, count);
     let cost_per_call = COSTS.get(&api).unwrap();
     RECEIVER.get_sink().record_count("IEX::API::total_cost", (count * cost_per_call) as u64);
-    RECEIVER.get_sink().record_count(format!("IEX::API::{:?}::cost", api), (count * cost_per_call) as u64);
+    RECEIVER.get_sink().record_count(format!("IEX::API::{:?}::count", api), count as u64);
 }
 
 pub fn record_to_log() {
+    debug!("commiting metrics to log");
     EXPORTER.turn();
 }
