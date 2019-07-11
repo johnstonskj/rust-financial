@@ -81,6 +81,8 @@ pub mod market;
 
 pub mod quote;
 
+pub mod registry;
+
 pub mod reporting;
 
 pub mod provider;

@@ -1,4 +1,5 @@
 /*!
+TBD
 */
 
 use chrono::NaiveDate;
@@ -30,27 +31,4 @@ pub struct Market {
     pub last_updated: Option<NaiveDate>,
     pub created: Option<NaiveDate>,
     pub comments: Option<String>
-}
-
-// ------------------------------------------------------------------------------------------------
-// Public Traits
-// ------------------------------------------------------------------------------------------------
-
-pub trait MarketRegistry {
-
-    fn new() -> Self;
-
-    fn name() -> String;
-
-    fn acronym() -> String;
-
-    fn source() -> String;
-
-    fn governing_body() -> String;
-
-    fn last_updated() -> NaiveDate;
-
-    fn next_publication() -> NaiveDate;
-
-    fn get(&self, code: String) -> Option<&Market>;
 }

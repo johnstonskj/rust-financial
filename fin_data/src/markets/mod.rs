@@ -13,7 +13,8 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use fin_model::market::{Market, MarketRegistry, MarketStatus};
+use fin_model::market::{Market, MarketStatus};
+use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -27,32 +28,35 @@ pub struct ISORegistry {
 // Trait Implementations
 // ------------------------------------------------------------------------------------------------
 
-impl MarketRegistry for ISORegistry {
+impl Registry<String, Market> for ISORegistry {
 
     fn new() -> Self {
         ISORegistry { registry: create_data_table() }
     }
 
-    fn name() -> String { "ISO 10383 - Market Identifier Code".to_string() }
+    fn name(&self) -> String { "ISO 10383 - Market Identifier Code".to_string() }
 
-    fn acronym() -> String { "MIC".to_string() }
+    fn acronym(&self) -> String { "MIC".to_string() }
 
-    fn source() -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
+    fn source(&self) -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
 
-    fn governing_body() -> String { "ISO".to_string() }
+    fn governing_body(&self) -> String { "International Organization for Standardization (ISO)".to_string() }
+
+    fn last_updated(&self) -> Option<NaiveDate> {
+        Some(NaiveDate::from_ymd(2019, 6, 24))
+    }
+
+    fn next_publication(&self) -> Option<NaiveDate> {
+        None
+    }
 
     fn get(&self, code: String) -> Option<&Market> {
         self.registry.get(&code)
     }
 
-    fn last_updated() -> NaiveDate {
-        NaiveDate::from_ymd(2019, 6, 24)
+    fn get_children(&self, _parent: String) -> Option<Vec<&Market>> {
+        None
     }
-
-    fn next_publication() -> NaiveDate {
-        NaiveDate::from_ymd(2019, 7, 8)
-    }
-
 }
 
 // ------------------------------------------------------------------------------------------------

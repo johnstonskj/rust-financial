@@ -1,4 +1,6 @@
-use chrono::NaiveDate;
+/*!
+TBD
+*/
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -11,26 +13,3 @@ pub struct Code<T> {
     pub description: String
 }
 
-// ------------------------------------------------------------------------------------------------
-// Public Traits
-// ------------------------------------------------------------------------------------------------
-
-pub trait ClassificationScheme<T>
-    where Self: std::marker::Sized {
-
-    fn new() -> Self;
-
-    fn name() -> String;
-
-    fn acronym() -> String;
-
-    fn source() -> String;
-
-    fn governing_body() -> Option<String>;
-
-    fn last_updated() -> Option<NaiveDate>;
-
-    fn get(&self, code: T) -> Option<&Code<T>>;
-
-    fn get_children(&self, parent: T) -> Option<Vec<&Code<T>>>;
-}

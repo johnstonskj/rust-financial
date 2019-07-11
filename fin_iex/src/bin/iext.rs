@@ -1,11 +1,20 @@
 #[macro_use]
 extern crate log;
 extern crate flexi_logger;
+extern crate num_format;
 
 use num_format::{SystemLocale, ToFormattedString};
 
+use fin_data::markets::ISORegistry;
+use fin_data::classifiers::naics;
+use fin_data::classifiers::uk_sic;
+use fin_data::classifiers::us_sic;
+
+use fin_model::classification::Code;
+use fin_model::market::Market;
 use fin_model::provider::Provider;
 use fin_model::quote::FetchPriceQuote;
+use fin_model::registry::Registry;
 use fin_model::request::RequestError;
 
 use fin_iex::IEXProvider;
@@ -13,6 +22,7 @@ use fin_iex::IEXProvider;
 enum Command {
     Price(String),
     Quote(String, bool),
+    Lookup(String, String),
     None
 }
 
@@ -24,6 +34,18 @@ fn main() {
 
     let cmd = handle_args();
 
+    match cmd {
+        Command::Price(_) | Command::Quote(_,_) =>
+            provider_commands(cmd),
+        Command::Lookup(_,_) =>
+            registry_commands(cmd),
+        Command::None => ()
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+
+fn provider_commands(cmd: Command) {
     let provider = match IEXProvider::new() {
         Ok(provider) => provider,
         Err(RequestError::ConfigurationError(err)) => {
@@ -96,12 +118,74 @@ fn main() {
                 }
             }
         },
-        Command::None => ()
+        _ => ()
     }
 
     println!("Data provided by {} ({}).", provider.attribution(), provider.url());
 
     provider.finish();
+}
+
+fn registry_commands(cmd: Command) {
+    match cmd {
+        Command::Lookup(scheme, code) => {
+            match scheme.as_str() {
+                "mic" => {
+                    let registry: ISORegistry = ISORegistry::new();
+                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
+                    println!(" Governing Body: {}", registry.governing_body());
+                    if let Some(date) = registry.last_updated() {
+                        println!("   Last updated: {}", date);
+                    }
+                    registry_lookup::<String, Market>(
+                        &code,
+                        registry.get(code.to_string()),
+                        &|m:&Market| println!("{}: {} ({})", code, m.description, m.country_code,));
+                },
+                "naics" => {
+                    let registry: naics::Scheme = naics::Scheme::new();
+                    let code = code.parse::<u32>().unwrap();
+                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
+                    println!(" Governing Body: {}", registry.governing_body());
+                    if let Some(date) = registry.last_updated() {
+                        println!("   Last updated: {}", date);
+                    }
+                    registry_lookup::<u32, Code<u32>>(
+                        &code,
+                        registry.get(code),
+                        &|c:&Code<u32>| println!("{}: {}", code, c.description));
+                },
+                "uksic" => {
+                    let registry: uk_sic::Scheme = uk_sic::Scheme::new();
+                    let code = code.parse::<u32>().unwrap();
+                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
+                    println!(" Governing Body: {}", registry.governing_body());
+                    if let Some(date) = registry.last_updated() {
+                        println!("   Last updated: {}", date);
+                    }
+                    registry_lookup::<u32, Code<u32>>(
+                        &code,
+                        registry.get(code),
+                        &|c:&Code<u32>| println!("{}: {}", code, c.description));
+                },
+                "ussic" => {
+                    let registry: us_sic::Scheme = us_sic::Scheme::new();
+                    let code = code.parse::<u16>().unwrap();
+                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
+                    println!(" Governing Body: {}", registry.governing_body());
+                    if let Some(date) = registry.last_updated() {
+                        println!("   Last updated: {}", date);
+                    }
+                    registry_lookup::<u16, Code<u16>>(
+                        &code,
+                        registry.get(code),
+                        &|c:&Code<u16>| println!("{}: {}", code, c.description));
+                },
+                _ => (),
+            }
+        },
+        _ => ()
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -130,6 +214,17 @@ fn handle_args() -> Command {
                 .help("The security symbol")
                 .required(true)
                 .index(1)))
+        .subcommand(SubCommand::with_name("lookup")
+            .about("Lookup a code from within a classification scheme")
+            .arg(Arg::with_name("scheme")
+                .short("s")
+                .long("scheme")
+                .takes_value(true)
+                .help("Classifier scheme"))
+            .arg(Arg::with_name("code")
+                .help("The classifier code")
+                .takes_value(true)
+                .required(true)))
         .get_matches();
 
     match matches.subcommand() {
@@ -140,9 +235,23 @@ fn handle_args() -> Command {
             Command::Quote(
                 matches.value_of("symbol").unwrap().to_string(),
                 matches.is_present("delayed")),
+        ("lookup", Some(matches))     =>
+            Command::Lookup(
+                matches.value_of("scheme").unwrap().to_string(),
+                matches.value_of("code").unwrap().to_string()),
         _ => {
             println!("Pick a [valid] command");
             Command::None
         }
+    }
+}
+// ------------------------------------------------------------------------------------------------
+
+fn registry_lookup<C: std::fmt::Display, T>(code: &C, value: Option<&T>, printer: &Fn(&T)) {
+    match value {
+        None =>
+            println!("No value found for code {}", code),
+        Some(value) =>
+            printer(value)
     }
 }

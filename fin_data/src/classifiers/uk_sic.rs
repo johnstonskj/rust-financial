@@ -2,13 +2,14 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use fin_model::classification::{Code, ClassificationScheme};
+use fin_model::classification::Code;
+use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
-pub struct SIC {
+pub struct Scheme {
     codes: HashMap<u32, Code<u32>>
 }
 
@@ -16,30 +17,34 @@ pub struct SIC {
 // Trait Implementations
 // ------------------------------------------------------------------------------------------------
 
-impl ClassificationScheme<u32> for SIC {
+impl Registry<u32, Code<u32>> for Scheme {
 
     fn new() -> Self {
-        SIC { codes: create_data_table() }
+        Scheme { codes: create_data_table() }
     }
 
-    fn name() -> String {
+    fn name(&self) -> String {
         "Standard industrial classification of economic activities".to_string()
     }
 
-    fn acronym() -> String {
+    fn acronym(&self) -> String {
         "SIC".to_string()
     }
 
-    fn source() -> String {
+    fn source(&self) -> String {
         "https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/527619/SIC07_CH_condensed_list_en.csv".to_string()
     }
 
-    fn governing_body() -> Option<String> {
-        Some("UK Companies House".to_string())
+    fn governing_body(&self) -> String {
+        "UK Companies House".to_string()
     }
 
-    fn last_updated() -> Option<NaiveDate> {
+    fn last_updated(&self) -> Option<NaiveDate> {
         Some(NaiveDate::from_ymd(2018, 1, 9))
+    }
+
+    fn next_publication(&self) -> Option<NaiveDate> {
+        None
     }
 
     fn get(&self, code: u32) -> Option<&Code<u32>> {

@@ -2,13 +2,14 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use fin_model::classification::{Code, ClassificationScheme};
+use fin_model::classification::Code;
+use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
-pub struct SIC {
+pub struct Scheme {
     codes: HashMap<u16, Code<u16>>
 }
 
@@ -16,29 +17,33 @@ pub struct SIC {
 // Trait Implementations
 // ------------------------------------------------------------------------------------------------
 
-impl ClassificationScheme<u16> for SIC {
+impl Registry<u16, Code<u16>> for Scheme {
 
     fn new() -> Self {
-        SIC { codes: create_data_table() }
+        Scheme { codes: create_data_table() }
     }
 
-    fn name() -> String {
+    fn name(&self) -> String {
         "Standard Industrial Classification".to_string()
     }
 
-    fn acronym() -> String {
+    fn acronym(&self) -> String {
         "SIC".to_string()
     }
 
-    fn source() -> String {
+    fn source(&self) -> String {
         "https://www.sec.gov/info/edgar/siccodes.htm".to_string()
     }
 
-    fn governing_body() -> Option<String> {
+    fn governing_body(&self) -> String {
+        "US Securities and Exchange Commission (SEC)".to_string()
+    }
+
+    fn last_updated(&self) -> Option<NaiveDate> {
         None
     }
 
-    fn last_updated() -> Option<NaiveDate> {
+    fn next_publication(&self) -> Option<NaiveDate> {
         None
     }
 

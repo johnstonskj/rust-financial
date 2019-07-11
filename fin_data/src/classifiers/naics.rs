@@ -2,13 +2,14 @@ use std::collections::HashMap;
 
 use chrono::NaiveDate;
 
-use fin_model::classification::{Code, ClassificationScheme};
+use fin_model::classification::Code;
+use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
-pub struct NAICS {
+pub struct Scheme {
     codes: HashMap<u32, Code<u32>>
 }
 
@@ -16,31 +17,35 @@ pub struct NAICS {
 // Trait Implementations
 // ------------------------------------------------------------------------------------------------
 
-impl ClassificationScheme<u32> for NAICS {
+impl Registry<u32, Code<u32>> for Scheme {
 
     fn new() -> Self {
-        NAICS { codes: create_data_table() }
+        Scheme { codes: create_data_table() }
     }
 
-    fn name() -> String {
+    fn name(&self) -> String {
         "North American Industry Classification System".to_string()
     }
 
-    fn acronym() -> String {
+    fn acronym(&self) -> String {
         "NAICS".to_string()
     }
 
-    fn source() -> String {
+    fn source(&self) -> String {
         // https://www.census.gov/eos/www/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx
         "https://www.census.gov/eos/www/naics/".to_string()
     }
 
-    fn governing_body() -> Option<String> {
-        Some("US Office of Management and Budget (OMB)".to_string())
+    fn governing_body(&self) -> String {
+        "US Office of Management and Budget (OMB)".to_string()
     }
 
-    fn last_updated() -> Option<NaiveDate> {
+    fn last_updated(&self) -> Option<NaiveDate> {
         Some(NaiveDate::from_ymd(2016, 3, 21))
+    }
+
+    fn next_publication(&self) -> Option<NaiveDate> {
+        None
     }
 
     fn get(&self, code: u32) -> Option<&Code<u32>> {

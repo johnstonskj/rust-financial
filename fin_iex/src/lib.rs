@@ -21,12 +21,11 @@ println!("Provider = [{}]({}).", provider.attribution(), provider.url());
 #[macro_use]
 extern crate log;
 
-extern crate steel_cent;
-extern crate chrono;
-extern crate reqwest;
-extern crate serde;
-extern crate serde_json;
-extern crate num_format;
+extern crate steel_cent;  // money
+extern crate chrono;      // date/time
+extern crate reqwest;     // HTTP
+extern crate serde;       // serialization
+extern crate serde_json;  // JSON serialization
 
 #[macro_use]
 extern crate lazy_static;
@@ -34,6 +33,7 @@ extern crate regex;
 
 #[macro_use]
 extern crate fin_model;
+extern crate fin_data;
 
 // ------------------------------------------------------------------------------------------------
 // Public Modules/Exports
