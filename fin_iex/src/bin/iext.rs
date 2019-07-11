@@ -100,6 +100,8 @@ fn main() {
     }
 
     println!("Data provided by {} ({}).", provider.attribution(), provider.url());
+
+    provider.finish();
 }
 
 // ------------------------------------------------------------------------------------------------

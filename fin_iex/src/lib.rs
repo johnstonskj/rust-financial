@@ -50,10 +50,14 @@ pub use provider::IEXProvider;
 mod quote;
 
 // ------------------------------------------------------------------------------------------------
-// Private Modules
+// Private Implementation Modules
 // ------------------------------------------------------------------------------------------------
 
+mod convert;
+
 mod env;
+
+mod metric;
 
 mod request;
 

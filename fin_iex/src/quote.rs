@@ -2,8 +2,6 @@
 NOT PUBLIC
 */
 
-use chrono::prelude::*;
-
 use steel_cent::SmallMoney;
 
 use serde;
@@ -15,6 +13,8 @@ use fin_model::request::{RequestError, RequestResult};
 use fin_model::symbol::is_valid;
 
 use crate::IEXProvider;
+use crate::convert::*;
+use crate::metric::{ApiName, record_api_use};
 use crate::request;
 
 // ------------------------------------------------------------------------------------------------
@@ -104,7 +104,10 @@ impl FetchPriceQuote for IEXProvider {
         match request::make_api_call(api_url) {
             Ok(raw_price) =>
                 match price_from_string(self.get_default_currency(), &raw_price) {
-                    Ok(price) => Ok(price),
+                    Ok(price) => {
+                        record_api_use(ApiName::Price);
+                        Ok(price)
+                    },
                     Err(err) => {
                         warn!("IEXProvider::<FetchPriceQuote>::latest_price_only parser error: {:?} in {}", err, raw_price);
                         Err(RequestError::BadResponseError)
@@ -128,7 +131,8 @@ impl FetchPriceQuote for IEXProvider {
         let response: RequestResult<IEXQuote> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
         match response {
-            Ok(quote) =>
+            Ok(quote) => {
+                record_api_use(ApiName::Quote);
                 Ok(Quote {
                     date: date_from_timestamp(quote.latest_update)?,
                     data: QuotePriceFull {
@@ -153,7 +157,8 @@ impl FetchPriceQuote for IEXProvider {
                             percentage: None
                         })
                     }
-                }),
+                })
+            },
             Err(err) => {
                 warn!("IEXProvider::<FetchPriceQuote>::real_time returned error: {:?}", err);
                 Err(err)
@@ -171,7 +176,8 @@ impl FetchPriceQuote for IEXProvider {
 
         let response: RequestResult<IEXDelayedQuote> = request::make_json_call(api_url);
         match response {
-            Ok(quote) =>
+            Ok(quote) => {
+                record_api_use(ApiName::DelayedQuote);
                 Ok(DelayedQuote {
                     date: date_from_timestamp(quote.delayed_price_time)?,
                     data: QuotePriceDelayed {
@@ -190,7 +196,8 @@ impl FetchPriceQuote for IEXProvider {
                         },
                         previous_close_date: None
                     }
-                }),
+                })
+            },
             Err(err) => {
                 warn!("IEXProvider::<FetchPriceQuote>::delayed returned error: {:?}", err);
                 Err(err)
@@ -199,58 +206,3 @@ impl FetchPriceQuote for IEXProvider {
     }
 }
 
-// ------------------------------------------------------------------------------------------------
-// Private
-// ------------------------------------------------------------------------------------------------
-
-use regex::Regex;
-
-use steel_cent::currency::with_code;
-
-fn source_from_string(src: &String) -> QuoteSource {
-    if src == "IEX real time price" {
-        QuoteSource::RealTime
-    } else if src == "15 minute delayed price" {
-        QuoteSource::Delayed
-    } else if src == "Close" {
-        QuoteSource::Close
-    } else if src == "Previous close" {
-        QuoteSource::PreviousClose
-    } else {
-        QuoteSource::Unknown
-    }
-}
-
-fn date_from_timestamp(ts: f64) -> RequestResult<DateTime<Local>> {
-    Ok(Local.timestamp_millis(ts.trunc() as i64))
-}
-
-fn price_from_string(currency: &String, price: &String) -> RequestResult<SmallMoney> {
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"^(\d+)(\.(\d+))$").unwrap();
-    }
-
-    match RE.captures(price) {
-        None => {
-            warn!("doesn't look like a float: {}", price);
-            Err(RequestError::BadResponseError)
-        },
-        Some(captures) =>
-            if let Some(_) = captures.get(2) {
-                Ok(SmallMoney::of_major_minor(
-                    with_code(currency).unwrap(),
-                    captures[1].parse::<i32>().unwrap(),
-                    captures[3].parse::<i32>().unwrap()))
-            } else {
-                Ok(SmallMoney::of_major_minor(
-                    with_code(currency).unwrap(),
-                    captures[1].parse::<i32>().unwrap(),
-                    0))
-            }
-    }
-}
-
-fn price_from_float(currency: &String, price: f64) -> RequestResult<SmallMoney> {
-    // this isn't efficient, but deconstructing floats is a black art
-    price_from_string(currency, &format!("{}", price))
-}

@@ -27,4 +27,7 @@ pub trait Provider
 
     /// The URL to the provider's home page or documentation.
     fn url(&self) -> String;
+
+    /// Optional, if the provider needs to close or complete any resources when done.
+    fn finish(&self);
 }

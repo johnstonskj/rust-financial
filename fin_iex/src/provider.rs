@@ -22,6 +22,7 @@ use fin_model::provider::Provider;
 use fin_model::request::{RequestError, RequestResult};
 
 use crate::env;
+use crate::metric;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types & Traits
@@ -112,7 +113,8 @@ impl Provider for IEXProvider {
             Some(_) => (),
             None => return Err(RequestError::ConfigurationError(format!("invalid currency code: {}", DEFAULT_CURRENCY)))
         }
-        info!("IEXProvider::<Provider>::new host: {}, version: {}, token: {},default_currency: {}",
+
+        info!("IEXProvider::<Provider>::new host: {}, version: {}, token: {}, default_currency: {}",
                host, version, token, DEFAULT_CURRENCY);
         Ok(IEXProvider { host, version, token, default_currency: DEFAULT_CURRENCY.to_string() })
     }
@@ -123,5 +125,9 @@ impl Provider for IEXProvider {
 
     fn url(&self) -> String {
         "https://iexcloud.io/".to_string()
+    }
+
+    fn finish(&self) {
+        metric::record_to_log()
     }
 }
