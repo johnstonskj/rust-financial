@@ -74,12 +74,12 @@ fn main() {
                     println!("Call failed: {:?}", e);
                 },
                 Ok(q) => {
-                    println!("Real-Time price: {} ({} {}%), updated {}",
+                    println!("Real-Time price: {} ({} {}%), updated {} {:?}",
                              q.data.latest.price,
                              q.data.latest.change.unwrap(),
                              q.data.latest.percentage.unwrap(),
-                             q.date);
-//                             q.data.latest_source);
+                             q.date,
+                             q.data.latest_source);
                     println!("   Price Ranges: {} {} ... {} {} @ {})",
                              q.data.range.open,
                              q.data.range.low,

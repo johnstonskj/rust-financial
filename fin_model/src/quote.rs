@@ -78,6 +78,7 @@ pub struct QuotePriceDelayed {
 
 pub type DelayedQuote = Snapshot<QuotePriceDelayed>;
 
+#[derive(Debug)]
 pub enum QuoteSource {
     RealTime,
     Delayed,
@@ -105,6 +106,7 @@ pub struct QuotePriceFull {
 pub type Quote = Snapshot<QuotePriceFull>;
 
 /// Common intervals for quote series data.
+#[derive(Debug)]
 pub enum SeriesInterval {
     Day,
     FiveDays,
