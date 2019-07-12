@@ -7,6 +7,7 @@ use serde::{Serialize, Deserialize};
 
 use fin_model::prelude::*;
 use fin_model::quote::*;
+use fin_model::reporting::FinancialPeriod;
 use fin_model::symbol::is_valid;
 
 use crate::IEXProvider;
@@ -203,3 +204,33 @@ impl FetchPriceQuote for IEXProvider {
     }
 }
 
+impl FetchPriceRangeSeries for IEXProvider {
+
+    fn intra_day(&self, for_symbol: Symbol) -> RequestResult<Option<PriceRangeSeries>> {
+        debug!("IEXProvider::<FetchPriceRangeSeries>::intra_day for_symbol: {}",
+               for_symbol);
+        assert_is_valid!(for_symbol);
+        Err(RequestError::Unsupported)
+    }
+
+    fn last(&self, for_symbol: Symbol, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
+        debug!("IEXProvider::<FetchPriceRangeSeries>::last for_symbol: {}, interval: {:?}",
+               for_symbol, interval);
+        assert_is_valid!(for_symbol);
+        Err(RequestError::Unsupported)
+    }
+
+    fn from(&self, for_symbol: Symbol, start_date: DateTime, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
+        debug!("IEXProvider::<FetchPriceRangeSeries>::from for_symbol: {}, start: {}, interval: {:?}",
+               for_symbol, start_date, interval);
+        assert_is_valid!(for_symbol);
+        Err(RequestError::Unsupported)
+    }
+
+    fn for_period(&self, for_symbol: Symbol, period: FinancialPeriod) -> RequestResult<PriceRangeSeries> {
+        debug!("IEXProvider::<FetchPriceRangeSeries>::for_period for_symbol: {}, period: {}",
+               for_symbol, period);
+        assert_is_valid!(for_symbol);
+        Err(RequestError::Unsupported)
+    }
+}
