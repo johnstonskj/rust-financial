@@ -5,17 +5,15 @@ extern crate num_format;
 
 use num_format::{SystemLocale, ToFormattedString};
 
+use fin_model::prelude::*;
+use fin_model::classification::Code;
+use fin_model::market::Market;
+use fin_model::quote::FetchPriceQuote;
+
 use fin_data::markets::ISORegistry;
 use fin_data::classifiers::naics;
 use fin_data::classifiers::uk_sic;
 use fin_data::classifiers::us_sic;
-
-use fin_model::classification::Code;
-use fin_model::market::Market;
-use fin_model::provider::Provider;
-use fin_model::quote::FetchPriceQuote;
-use fin_model::registry::Registry;
-use fin_model::request::RequestError;
 
 use fin_iex::IEXProvider;
 
