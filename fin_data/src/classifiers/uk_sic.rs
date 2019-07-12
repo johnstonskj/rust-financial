@@ -6,10 +6,8 @@ The data for this file was generated automatically.
 
 use std::collections::HashMap;
 
-use chrono::NaiveDate;
-
+use fin_model::prelude::*;
 use fin_model::classification::Code;
-use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -45,11 +43,11 @@ impl Registry<u32, Code<u32>> for Scheme {
         "UK Companies House".to_string()
     }
 
-    fn last_updated(&self) -> Option<NaiveDate> {
-        Some(NaiveDate::from_ymd(2018, 1, 9))
+    fn last_updated(&self) -> Option<Date> {
+        Some(Date::from_ymd(2018, 1, 9))
     }
 
-    fn next_publication(&self) -> Option<NaiveDate> {
+    fn next_publication(&self) -> Option<Date> {
         None
     }
 

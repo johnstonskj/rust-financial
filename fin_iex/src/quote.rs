@@ -7,9 +7,8 @@ use steel_cent::SmallMoney;
 use serde;
 use serde::{Serialize, Deserialize};
 
-use fin_model::Symbol;
+use fin_model::prelude::*;
 use fin_model::quote::*;
-use fin_model::request::{RequestError, RequestResult};
 use fin_model::symbol::is_valid;
 
 use crate::IEXProvider;

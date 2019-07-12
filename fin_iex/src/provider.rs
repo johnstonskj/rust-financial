@@ -18,8 +18,7 @@ use std::collections::HashMap;
 
 use steel_cent::currency::with_code;
 
-use fin_model::provider::Provider;
-use fin_model::request::{RequestError, RequestResult};
+use fin_model::prelude::*;
 
 use crate::internal::env;
 use crate::internal::metric;

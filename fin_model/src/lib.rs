@@ -25,53 +25,11 @@ extern crate lazy_static;
 extern crate regex;
 extern crate steel_cent;
 
-use std::time::Duration;
-
-use chrono::{DateTime, Local};
-
-// ------------------------------------------------------------------------------------------------
-// Public Types
-// ------------------------------------------------------------------------------------------------
-
-/// The time zone associated with all `chrono::DateTime` instances.
-pub type ResponseTimezone = Local;
-
-/// A snapshot value; `data` with a `date`, usually the last updated
-/// or or calculated date and time.
-#[derive(Debug)]
-pub struct Snapshot<T> {
-    pub date: DateTime<ResponseTimezone>,
-    pub data: T
-}
-
-/// A time-bounded value; `data` with a `start_date` and `end_date`
-/// signifying the range within which the data is considered valid.
-#[derive(Debug)]
-pub struct Bounded<T> {
-    pub start_date: DateTime<ResponseTimezone>,
-    pub end_date: DateTime<ResponseTimezone>,
-    pub data: T
-}
-
-/// Represents a `series` of data points, over the time period indicated
-/// by `interval`, with values separated by `intra_interval`.
-#[derive(Debug)]
-pub struct Series<I, T> {
-    /// the interval over which time data is reported
-    pub interval: I,
-    /// the interval between data points within the overall `interval`
-    pub intra_interval: Duration,
-    /// the actual data points in increasing time order
-    pub series: Vec<Snapshot<T>>
-}
-
 // ------------------------------------------------------------------------------------------------
 // Public Modules
 // ------------------------------------------------------------------------------------------------
 
-pub mod symbol;
-
-pub use symbol::{Symbol, Symbols};
+pub mod prelude;
 
 pub mod analysis;
 
@@ -88,3 +46,6 @@ pub mod reporting;
 pub mod provider;
 
 pub mod request;
+
+pub mod symbol;
+

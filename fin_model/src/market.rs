@@ -10,7 +10,7 @@ The market registry is an implementation of the
 lookup of MIC identifiers.
 */
 
-use chrono::NaiveDate;
+use crate::prelude::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -44,7 +44,7 @@ pub struct Market {
     pub acronym: Option<String>,
     pub city: Option<String>,
     pub website: Option<String>,
-    pub last_updated: Option<NaiveDate>,
-    pub created: Option<NaiveDate>,
+    pub last_updated: Option<Date>,
+    pub created: Option<Date>,
     pub comments: Option<String>
 }

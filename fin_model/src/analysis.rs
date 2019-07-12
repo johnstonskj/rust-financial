@@ -5,11 +5,7 @@ Provides structs and traits that represent common market analysis.
 use std::collections::HashMap;
 use std::time::Duration;
 
-use steel_cent::SmallMoney;
-use chrono::DateTime;
-
-use crate::{Bounded, ResponseTimezone, Snapshot, Symbol, Symbols};
-use crate::request::RequestResult;
+use crate::prelude::*;
 use crate::reporting::FinancialPeriod;
 
 // ------------------------------------------------------------------------------------------------
@@ -40,18 +36,18 @@ pub struct Ratings {
 
 /// Consensus price targets; high, low, and average.
 pub struct PriceTarget {
-    pub high: SmallMoney,
-    pub low:  SmallMoney,
-    pub average: SmallMoney,
+    pub high: Money,
+    pub low:  Money,
+    pub average: Money,
     pub number_of_analysts: Counter
 }
 
 /// Consensus Earnings per Share (EPS) targets for some fiscal period.
 pub struct EPSConsensus {
-    pub consensus: SmallMoney,
+    pub consensus: Money,
     pub number_of_estimates: Counter,
     pub fiscal_period: FinancialPeriod,
-    pub fiscal_end_date: DateTime<ResponseTimezone>,
+    pub fiscal_end_date: DateTime,
 }
 
 // ------------------------------------------------------------------------------------------------

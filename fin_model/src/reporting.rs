@@ -17,10 +17,9 @@ use std::fmt;
 use std::fmt::Display;
 use std::str::FromStr;
 
-use chrono::DateTime;
 use regex::Regex;
 
-use crate::ResponseTimezone;
+use crate::prelude::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -58,7 +57,7 @@ pub struct FiscalPeriod {
     /// the period within the fiscal year
     pub period: FinancialPeriod,
     /// the start date for the fiscal year
-    pub fiscal_year_start_date: DateTime<ResponseTimezone>
+    pub fiscal_year_start_date: DateTime
 }
 
 // ------------------------------------------------------------------------------------------------

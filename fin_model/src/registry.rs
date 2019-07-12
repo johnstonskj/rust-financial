@@ -13,7 +13,7 @@ support for a [`get_children`](trait.Registry.html#tymethod.get_children) method
 that may return `None` if unsupported by the current scheme.
 */
 
-use chrono::NaiveDate;
+use chrono::NaiveDate as Date; /* match this to prelude */
 
 // ------------------------------------------------------------------------------------------------
 // Public Traits
@@ -39,10 +39,10 @@ pub trait Registry<C: std::fmt::Display, T> {
     fn governing_body(&self) -> String;
 
     /// The date, if known, that the scheme was last updated or published.
-    fn last_updated(&self) -> Option<NaiveDate>;
+    fn last_updated(&self) -> Option<Date>;
 
     /// The date, if known, that the scheme is expected to be updated.
-    fn next_publication(&self) -> Option<NaiveDate>;
+    fn next_publication(&self) -> Option<Date>;
 
     /// Return a description of the code, or `None` if not present.
     fn get(&self, code: C) -> Option<&T> where Self: Sized;

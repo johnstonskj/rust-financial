@@ -16,13 +16,8 @@ The traits include the following capabilities:
 
 */
 
-use chrono::DateTime;
-
-use steel_cent::SmallMoney;
-
-use crate::{ResponseTimezone, Series, Snapshot, Symbol};
+use crate::prelude::*;
 use crate::reporting::FinancialPeriod;
-use crate::request::RequestResult;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -37,13 +32,13 @@ use crate::request::RequestResult;
 /// it is the price at closing of the same trading day.
 pub struct PriceRange {
     /// price at market opening
-    pub open: SmallMoney,
+    pub open: Money,
     /// price at market closing
-    pub close: SmallMoney,
+    pub close: Money,
     /// highest price within the market window
-    pub high: SmallMoney,
+    pub high: Money,
     /// lowest price within the market window
-    pub low: SmallMoney,
+    pub low: Money,
     /// the (optional) volume of trading within the market window
     pub volume: Option<u64>
 }
@@ -51,9 +46,9 @@ pub struct PriceRange {
 /// A returned, real-time or delayed, price quote.
 pub struct QuotePrice {
     /// the current price
-    pub price: SmallMoney,
+    pub price: Money,
     /// the (optional) change in currency, since the last close
-    pub change: Option<SmallMoney>,
+    pub change: Option<Money>,
     /// the (optional) change, in percentage, since the last close
     pub percentage: Option<f64>,
 }
@@ -65,15 +60,15 @@ pub struct QuotePriceDelayed {
     /// number of minutes of delay (average)
     pub delayed_by: u16,
     /// highest price within the market window
-    pub high: SmallMoney,
+    pub high: Money,
     /// lowest price within the market window
-    pub low: SmallMoney,
+    pub low: Money,
     /// the (optional) number of trades at this latest price
     pub trade_size: Option<u64>,
     /// the (optional) volume of trading within the market window
     pub volume: Option<u64>,
     /// the (optional) previous close date
-    pub previous_close_date: Option<DateTime<ResponseTimezone>>,
+    pub previous_close_date: Option<DateTime>,
 }
 
 /// Represents a `QuotePriceDelayed` at a given point in time.
@@ -101,7 +96,7 @@ pub struct QuotePriceFull {
     /// the (optional) number of trades at this latest price
     pub trade_size: Option<u64>,
     /// the (optional) previous close date
-    pub previous_close_date: Option<DateTime<ResponseTimezone>>,
+    pub previous_close_date: Option<DateTime>,
     /// the (optional) price during extended trading
     pub extended: Option<QuotePrice>
 }
@@ -140,7 +135,7 @@ pub trait FetchPriceQuote {
 
     /// Return only the latest price, this may be delayed or real-time, simply
     /// the best available from the service provider.
-    fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<SmallMoney>;
+    fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<Money>;
 
     /// Return a real-time price, or `RequestError::Unsupported` if the service
     /// provider cannot honor real-time requests.
@@ -169,7 +164,7 @@ pub trait FetchPriceRangeSeries {
     /// Return a series of prices for the specified `SeriesInterval` starting from
     /// `start_date`. If the start_date is less than `interval` from the current
     /// date the series will be truncated.
-    fn from(&self, for_symbol: Symbol, start_date: DateTime<ResponseTimezone>, interval: SeriesInterval) -> RequestResult<PriceRangeSeries>;
+    fn from(&self, for_symbol: Symbol, start_date: DateTime, interval: SeriesInterval) -> RequestResult<PriceRangeSeries>;
 
     /// Return a series of prices for the specified financial period. The series
     /// may be truncated if the period is not yet completed.

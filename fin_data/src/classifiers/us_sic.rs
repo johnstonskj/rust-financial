@@ -6,10 +6,8 @@ The data for this file was generated automatically.
 
 use std::collections::HashMap;
 
-use chrono::NaiveDate;
-
+use fin_model::prelude::*;
 use fin_model::classification::Code;
-use fin_model::registry::Registry;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
@@ -45,11 +43,11 @@ impl Registry<u16, Code<u16>> for Scheme {
         "US Securities and Exchange Commission (SEC)".to_string()
     }
 
-    fn last_updated(&self) -> Option<NaiveDate> {
+    fn last_updated(&self) -> Option<Date> {
         None
     }
 
-    fn next_publication(&self) -> Option<NaiveDate> {
+    fn next_publication(&self) -> Option<Date> {
         None
     }
 

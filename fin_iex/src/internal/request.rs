@@ -6,7 +6,7 @@ use reqwest;
 
 use serde::de::DeserializeOwned;
 
-use fin_model::request::{RequestError, RequestResult};
+use fin_model::prelude::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Functions
