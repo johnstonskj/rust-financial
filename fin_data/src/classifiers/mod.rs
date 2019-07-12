@@ -1,3 +1,6 @@
+/*!
+Classification scheme implementation for commonly used schemes.
+*/
 
 pub mod uk_sic;
 

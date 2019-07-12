@@ -1,3 +1,9 @@
+/*!
+UK Standard industrial classification of economic activities registry implementation.
+
+The data for this file was generated automatically.
+*/
+
 use std::collections::HashMap;
 
 use chrono::NaiveDate;

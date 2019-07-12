@@ -1,3 +1,9 @@
+/*!
+American Industry Classification System registry implementation.
+
+The data for this file was generated automatically.
+*/
+
 use std::collections::HashMap;
 
 use chrono::NaiveDate;

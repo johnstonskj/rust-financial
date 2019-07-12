@@ -1,12 +1,7 @@
-/*
-DO NOT MODIFY THIS FILE
-=======================
-Generated from:
-  <https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls>
-Fetched:
-  2019-07-01
-Generated on:
-  2019-7-3
+/*!
+Market Identifier Code registry implementation.
+
+The data for this file was generated from https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls
 */
 
 use std::collections::HashMap;

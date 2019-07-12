@@ -3,54 +3,6 @@ from datetime import date
 import math
 import pandas as pd
 
-def write_file_header(file_name, fetched):
-    today = date.today()
-    print("""/*
-DO NOT MODIFY THIS FILE
-=======================
-Generated from:
-  <https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls>
-Fetched:
-  %s
-Generated on:
-  %d-%d-%d
-*/
-
-use std::collections::HashMap;
-
-use chrono::NaiveDate;
-
-use fin_model::market::{Market, MarketRegistry, MarketStatus};
-
-// ------------------------------------------------------------------------------------------------
-
-pub struct ISORegistry {
-    registry: HashMap<String, Market>
-}
-
-impl MarketRegistry for ISORegistry {
-
-    fn new() -> Self {
-        ISORegistry { registry: create_data_table() }
-    }
-
-    fn name() -> String { "ISO 10383 - Market Identifier Code".to_string() }
-
-    fn acronym() -> String { "MIC".to_string() }
-
-    fn source() -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
-
-    fn governing_body() -> String { "ISO".to_string() }
-
-    fn get(&self, code: String) -> Option<&Market> {
-        self.registry.get(&code)
-    }""" % (fetched, today.year, today.month, today.day))
-    df = pd.read_excel(file_name, sheet_name=8, skiprows=2, header=None)
-    write_date_fn(df.iat[0,1], "last_updated")
-    write_date_fn(df.iat[1,1], "next_publication")
-    print("""
-}""")
-
 def write_date_fn(date, name):
     print("""
     fn %s() -> NaiveDate {
@@ -152,5 +104,4 @@ if len(argv) < 3:
     print("usage: python %s fetch-date xls-file" % argv[0])
 else:
     file_name = argv[2]
-    write_file_header(file_name, argv[1])
     write_data_table(file_name)
