@@ -76,8 +76,10 @@ pub struct QuotePriceDelayed {
     pub previous_close_date: Option<DateTime<ResponseTimezone>>,
 }
 
+/// Represents a `QuotePriceDelayed` at a given point in time.
 pub type DelayedQuote = Snapshot<QuotePriceDelayed>;
 
+/// The source for the `latest` price in a quote.
 #[derive(Debug)]
 pub enum QuoteSource {
     RealTime,
@@ -87,6 +89,8 @@ pub enum QuoteSource {
     Unknown
 }
 
+/// A complete price quote, includes price, range, and potentially
+/// extended hours trading data.
 pub struct QuotePriceFull {
     /// the range of prices for the trading day
     pub range: PriceRange,
