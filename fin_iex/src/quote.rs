@@ -2,8 +2,6 @@
 IEX API wrapper
 */
 
-use steel_cent::SmallMoney;
-
 use serde;
 use serde::{Serialize, Deserialize};
 
@@ -92,7 +90,7 @@ struct IEXDelayedQuote {
 
 impl FetchPriceQuote for IEXProvider {
 
-    fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<SmallMoney> {
+    fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<Money> {
         debug!("IEXProvider::<FetchPriceQuote>::latest_price_only for_symbol: {}", for_symbol);
         assert_is_valid!(for_symbol);
 
