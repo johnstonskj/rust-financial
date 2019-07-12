@@ -132,11 +132,7 @@ fn registry_commands(cmd: Command) {
             match scheme.as_str() {
                 "mic" => {
                     let registry: ISORegistry = ISORegistry::new();
-                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
-                    println!(" Governing Body: {}", registry.governing_body());
-                    if let Some(date) = registry.last_updated() {
-                        println!("   Last updated: {}", date);
-                    }
+                    registry_details(&registry);
                     registry_lookup::<String, Market>(
                         &code,
                         registry.get(code.to_string()),
@@ -145,11 +141,7 @@ fn registry_commands(cmd: Command) {
                 "naics" => {
                     let registry: naics::Scheme = naics::Scheme::new();
                     let code = code.parse::<u32>().unwrap();
-                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
-                    println!(" Governing Body: {}", registry.governing_body());
-                    if let Some(date) = registry.last_updated() {
-                        println!("   Last updated: {}", date);
-                    }
+                    registry_details(&registry);
                     registry_lookup::<u32, Code<u32>>(
                         &code,
                         registry.get(code),
@@ -158,11 +150,7 @@ fn registry_commands(cmd: Command) {
                 "uksic" => {
                     let registry: uk_sic::Scheme = uk_sic::Scheme::new();
                     let code = code.parse::<u32>().unwrap();
-                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
-                    println!(" Governing Body: {}", registry.governing_body());
-                    if let Some(date) = registry.last_updated() {
-                        println!("   Last updated: {}", date);
-                    }
+                    registry_details(&registry);
                     registry_lookup::<u32, Code<u32>>(
                         &code,
                         registry.get(code),
@@ -171,11 +159,7 @@ fn registry_commands(cmd: Command) {
                 "ussic" => {
                     let registry: us_sic::Scheme = us_sic::Scheme::new();
                     let code = code.parse::<u16>().unwrap();
-                    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
-                    println!(" Governing Body: {}", registry.governing_body());
-                    if let Some(date) = registry.last_updated() {
-                        println!("   Last updated: {}", date);
-                    }
+                    registry_details(&registry);
                     registry_lookup::<u16, Code<u16>>(
                         &code,
                         registry.get(code),
@@ -246,6 +230,14 @@ fn handle_args() -> Command {
     }
 }
 // ------------------------------------------------------------------------------------------------
+
+fn registry_details<C: std::fmt::Display, T>(registry: &Registry<C, T>) {
+    println!("Registry Scheme: {} ({})", registry.name(), registry.acronym());
+    println!(" Governing Body: {}", registry.governing_body());
+    if let Some(date) = registry.last_updated() {
+        println!("   Last updated: {}", date);
+    }
+}
 
 fn registry_lookup<C: std::fmt::Display, T>(code: &C, value: Option<&T>, printer: &Fn(&T)) {
     match value {
