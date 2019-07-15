@@ -32,14 +32,34 @@ pub fn date_from_timestamp(ts: f64) -> RequestResult<DateTime> {
     Ok(DateTime::from_timestamp(ts.trunc() as i64, 0))
 }
 
+pub fn date_from_string(date: &String) -> RequestResult<DateTime> {
+    match format!("{}T00:00:00", date).parse::<DateTime>() {
+        Err(err) => {
+            warn!("doesn't look like a date/time: {}, error: {}", date, err);
+            Err(RequestError::BadResponseError)
+        },
+        Ok(dt) => Ok(dt)
+    }
+}
+
+pub fn datetime_from_string(date: &String, time: &String) -> RequestResult<DateTime> {
+    match format!("{}T{}", date, time).parse::<DateTime>() {
+        Err(err) => {
+            warn!("doesn't look like a date/time: {} {}, error: {}", date, time, err);
+            Err(RequestError::BadResponseError)
+        },
+        Ok(dt) => Ok(dt)
+    }
+}
+
 pub fn price_from_string(currency: &String, price: &String) -> RequestResult<Money> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"^(\d+)(\.(\d+))$").unwrap();
+        static ref RE: Regex = Regex::new(r"^(\d+)(\.(\d+))?$").unwrap();
     }
 
     match RE.captures(price) {
         None => {
-            warn!("doesn't look like a float: {}", price);
+            warn!("doesn't look like a float: '{}'", price);
             Err(RequestError::BadResponseError)
         },
         Some(captures) => {

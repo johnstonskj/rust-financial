@@ -43,9 +43,9 @@ pub struct Series<I, T> {
     /// the interval over which time data is reported
     pub interval: I,
     /// the interval between data points within the overall `interval`
-    pub intra_interval: Duration,
+    pub intra_interval: Option<Duration>,
     /// the actual data points in increasing time order
-    pub series: Vec<Snapshot<T>>
+    pub series: Vec<T>
 }
 
 // ------------------------------------------------------------------------------------------------

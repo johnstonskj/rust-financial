@@ -2,6 +2,8 @@
 IEX API wrapper
 */
 
+use std::time::Duration;
+
 use serde;
 use serde::{Serialize, Deserialize};
 
@@ -12,7 +14,7 @@ use fin_model::symbol::is_valid;
 
 use crate::IEXProvider;
 use crate::internal::convert::*;
-use crate::internal::metric::{ApiName, record_api_use};
+use crate::internal::metric::{ApiName, record_api_use, record_api_usage};
 use crate::internal::request;
 
 // ------------------------------------------------------------------------------------------------
@@ -84,6 +86,68 @@ struct IEXDelayedQuote {
     processed_time: f64,
     total_volume: Option<f64>
 }
+
+#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct IEXHistoricalPrice {
+    pub date: String,
+    pub label: String,
+
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+
+    #[serde(rename = "uOpen")]
+    pub unadjusted_open: f64,
+    #[serde(rename = "uHigh")]
+    pub unadjusted_high: f64,
+    #[serde(rename = "uLow")]
+    pub unadjusted_low: f64,
+    #[serde(rename = "uClose")]
+    pub unadjusted_close: f64,
+    #[serde(rename = "uVolume")]
+    pub unadjusted_volume: f64,
+
+    pub change: f64,
+    pub change_percent: f64,
+    pub change_over_time: f64
+}
+
+type IEXHistoricalPrices = Vec<IEXHistoricalPrice>;
+
+#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct IEXIntradayPrice {
+    pub date: String,
+    pub minute: String,
+    pub label: String,
+
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub notional: f64,
+    pub number_of_trades: f64,
+
+    pub market_open: f64,
+    pub market_high: f64,
+    pub market_low: f64,
+    pub market_close: f64,
+    pub market_volume: f64,
+    pub market_average: f64,
+    pub market_notional: f64,
+    pub market_number_of_trades: f64,
+    pub market_change_over_time: f64,
+
+    pub change: f64,
+    pub change_percent: f64,
+    pub change_over_time: f64
+}
+
+type IEXIntradayPrices = Vec<IEXIntradayPrice>;
 
 // ------------------------------------------------------------------------------------------------
 // Trait Implementations
@@ -173,6 +237,7 @@ impl FetchPriceQuote for IEXProvider {
             None);
 
         let response: RequestResult<IEXDelayedQuote> = request::make_json_call(api_url);
+        let dc = self.get_default_currency();
         match response {
             Ok(quote) => {
                 record_api_use(ApiName::DelayedQuote);
@@ -180,13 +245,13 @@ impl FetchPriceQuote for IEXProvider {
                     date: date_from_timestamp(quote.delayed_price_time)?,
                     data: QuotePriceDelayed {
                         latest: QuotePrice {
-                            price: price_from_float(self.get_default_currency(), quote.delayed_price)?,
+                            price: price_from_float(dc, quote.delayed_price)?,
                             change: None,
                             percentage: None
                         },
                         delayed_by: 15,
-                        high: price_from_float(self.get_default_currency(), quote.high)?,
-                        low: price_from_float(self.get_default_currency(), quote.low)?,
+                        high: price_from_float(dc, quote.high)?,
+                        low: price_from_float(dc, quote.low)?,
                         trade_size: Some(quote.delayed_size as u64),
                         volume: match quote.total_volume {
                             None => None,
@@ -206,18 +271,78 @@ impl FetchPriceQuote for IEXProvider {
 
 impl FetchPriceRangeSeries for IEXProvider {
 
-    fn intra_day(&self, for_symbol: Symbol) -> RequestResult<Option<PriceRangeSeries>> {
-        debug!("IEXProvider::<FetchPriceRangeSeries>::intra_day for_symbol: {}",
-               for_symbol);
+    fn intra_day(&self, for_symbol: Symbol, interval_minutes: u8) -> RequestResult<Option<PriceRangeSeries>> {
+        debug!("IEXProvider::<FetchPriceRangeSeries>::intra_day for_symbol: {}, interval: {}",
+               for_symbol, interval_minutes);
         assert_is_valid!(for_symbol);
-        Err(RequestError::Unsupported)
+
+        let api_url = self.make_api_url(
+            format!("/stock/{}/intraday-prices?chartInterval={}", for_symbol, interval_minutes),
+            None);
+
+        let response: RequestResult<IEXIntradayPrices> = request::make_json_call(api_url);
+        let dc = self.get_default_currency();
+        match response {
+            Ok(values) => {
+                record_api_usage(ApiName::Intraday, values.len() as u16);
+                let series: Vec<Snapshot<PriceRange>> = values.iter().map(|v|
+                    // TODO: fix this to unwrap safely
+                    intraday_to_price_range(dc, v).unwrap()
+                ).collect();
+                Ok(Some(PriceRangeSeries {
+                    interval: SeriesInterval::Day,
+                    intra_interval: Some(Duration::new((60 * interval_minutes) as u64, 0)),
+                    series: series
+                }))
+            },
+            Err(err) => {
+                warn!("IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}", err);
+                Err(err)
+            }
+        }
     }
 
     fn last(&self, for_symbol: Symbol, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
         debug!("IEXProvider::<FetchPriceRangeSeries>::last for_symbol: {}, interval: {:?}",
                for_symbol, interval);
         assert_is_valid!(for_symbol);
-        Err(RequestError::Unsupported)
+
+        let range = match interval {
+            SeriesInterval::Day => "1d",
+            SeriesInterval::FiveDays => "5d",
+            SeriesInterval::OneMonth => "1m",
+            SeriesInterval::ThreeMonths => "3m",
+            SeriesInterval::SixMonths => "6m",
+            SeriesInterval::YearToDate => "ytd",
+            SeriesInterval::OneYear => "1y",
+            SeriesInterval::TwoYears => "2y",
+            SeriesInterval::FiveYears => "5y"
+        };
+
+        let api_url = self.make_api_url(
+            format!("/stock/{}/chart/{}?chartByDay=true", for_symbol, range),
+            None);
+
+        let response: RequestResult<IEXHistoricalPrices> = request::make_json_call(api_url);
+        let dc = self.get_default_currency();
+        match response {
+            Ok(values) => {
+                record_api_usage(ApiName::Historical, values.len() as u16);
+                let series: Vec<Snapshot<PriceRange>> = values.iter().map(|v|
+                    // TODO: fix this to unwrap safely
+                    historical_to_price_range(dc, v).unwrap()
+                ).collect();
+                Ok(PriceRangeSeries {
+                    interval: interval,
+                    intra_interval: None,
+                    series: series
+                })
+            },
+            Err(err) => {
+                println!("IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}", err);
+                Err(err)
+            }
+        }
     }
 
     fn from(&self, for_symbol: Symbol, start_date: DateTime, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
@@ -233,4 +358,34 @@ impl FetchPriceRangeSeries for IEXProvider {
         assert_is_valid!(for_symbol);
         Err(RequestError::Unsupported)
     }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Private Implementations
+// ------------------------------------------------------------------------------------------------
+
+fn intraday_to_price_range(dc: &String, v : &IEXIntradayPrice) -> RequestResult<Snapshot<PriceRange>> {
+    Ok(Snapshot {
+        date: datetime_from_string(&v.date, &format!("{}:00", v.minute))?,
+        data: PriceRange {
+            open: price_from_float(dc, v.high)?,
+            close: price_from_float(dc, v.high) ?,
+            high: price_from_float(dc, v.high) ?,
+            low: price_from_float(dc, v.low) ?,
+            volume: Some(v.volume as u64)
+        }
+    })
+}
+
+fn historical_to_price_range(dc: &String, v : &IEXHistoricalPrice) -> RequestResult<Snapshot<PriceRange>> {
+    Ok(Snapshot {
+        date: date_from_string(&v.date)?,
+        data: PriceRange {
+            open: price_from_float(dc, v.high)?,
+            close: price_from_float(dc, v.high) ?,
+            high: price_from_float(dc, v.high) ?,
+            low: price_from_float(dc, v.low) ?,
+            volume: Some(v.volume as u64)
+        }
+    })
 }

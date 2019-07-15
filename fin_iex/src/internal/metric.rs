@@ -13,7 +13,9 @@ use metrics::exporters::LogExporter;
 pub enum ApiName {
     Price,
     DelayedQuote,
-    Quote
+    Quote,
+    Intraday,
+    Historical
 }
 
 lazy_static! {
@@ -22,6 +24,8 @@ lazy_static! {
         m.insert(ApiName::Price, 1);
         m.insert(ApiName::Quote, 1);
         m.insert(ApiName::DelayedQuote, 1);
+        m.insert(ApiName::Intraday, 1);
+        m.insert(ApiName::Historical, 10);
         m
     };
 

@@ -8,7 +8,7 @@ use num_format::{SystemLocale, ToFormattedString};
 use fin_model::prelude::*;
 use fin_model::classification::Code;
 use fin_model::market::Market;
-use fin_model::quote::FetchPriceQuote;
+use fin_model::quote::{FetchPriceQuote, FetchPriceRangeSeries, SeriesInterval};
 
 use fin_data::markets::ISORegistry;
 use fin_data::classifiers::naics;
@@ -20,6 +20,7 @@ use fin_iex::IEXProvider;
 enum Command {
     Price(String),
     Quote(String, bool),
+    Historical(String, String),
     Lookup(String, String),
     None
 }
@@ -33,7 +34,7 @@ fn main() {
     let cmd = handle_args();
 
     match cmd {
-        Command::Price(_) | Command::Quote(_,_) =>
+        Command::Price(_) | Command::Quote(_,_) | Command::Historical(_,_) =>
             provider_commands(cmd),
         Command::Lookup(_,_) =>
             registry_commands(cmd),
@@ -100,7 +101,7 @@ fn provider_commands(cmd: Command) {
                              q.data.latest.percentage.unwrap(),
                              q.date,
                              q.data.latest_source);
-                    println!("   Price Ranges: {} {} ... {} {} @ {})",
+                    println!("   Price Ranges: {} {} ... {} {} @ {}",
                              q.data.range.open,
                              q.data.range.low,
                              q.data.range.high,
@@ -112,6 +113,43 @@ fn provider_commands(cmd: Command) {
                     if let Some(extended) = q.data.extended {
                         println!(" Extended price: {}",
                                  extended.price);
+                    }
+                }
+            }
+        },
+        Command::Historical(symbol, interval) => {
+            let interval = match interval.as_str() {
+                "1d" => SeriesInterval::Day,
+                "5d" => SeriesInterval::FiveDays,
+                "1m" => SeriesInterval::OneMonth,
+                "3m" => SeriesInterval::ThreeMonths,
+                "6m" => SeriesInterval::SixMonths,
+                "ytd" => SeriesInterval::YearToDate,
+                "1y" => SeriesInterval::OneYear,
+                "2y" => SeriesInterval::TwoYears,
+                "5y" => SeriesInterval::FiveYears,
+                _ => {
+                    warn!("invalid interval: {}", interval);
+                    return
+                }
+            };
+            match provider.last(symbol, interval) {
+                Err(e) => {
+                    println!("Call failed: {:?}", e);
+                },
+                Ok(series) => {
+                    for range in series.series {
+                        println!("{} {} {} ... {} {} @ {}",
+                            range.date.date(),
+                            range.data.open,
+                            range.data.low,
+                            range.data.high,
+                            range.data.close,
+                            match range.data.volume {
+                                None => "N/A".to_string(),
+                                Some(v) => v.to_formatted_string(&locale)
+                            }
+                        );
                     }
                 }
             }
@@ -184,6 +222,7 @@ fn handle_args() -> Command {
             .about("Fetch latest price")
             .arg(Arg::with_name("symbol")
                 .help("The security symbol")
+                .takes_value(true)
                 .required(true)
                 .index(1)))
         .subcommand(SubCommand::with_name("quote")
@@ -192,6 +231,18 @@ fn handle_args() -> Command {
                 .short("d")
                 .long("delayed")
                 .help("Fetch delayed quotes only"))
+            .arg(Arg::with_name("symbol")
+                .help("The security symbol")
+                .takes_value(true)
+                .required(true)
+                .index(1)))
+        .subcommand(SubCommand::with_name("history")
+            .about("Fetch price history")
+            .arg(Arg::with_name("interval")
+                .short("i")
+                .long("interval")
+                .takes_value(true)
+                .help("The interval over which to fetch prices"))
             .arg(Arg::with_name("symbol")
                 .help("The security symbol")
                 .required(true)
@@ -217,6 +268,10 @@ fn handle_args() -> Command {
             Command::Quote(
                 matches.value_of("symbol").unwrap().to_string(),
                 matches.is_present("delayed")),
+        ("history", Some(matches))      =>
+            Command::Historical(
+                matches.value_of("symbol").unwrap().to_string(),
+                matches.value_of("interval").unwrap().to_string()),
         ("lookup", Some(matches))     =>
             Command::Lookup(
                 matches.value_of("scheme").unwrap().to_string(),

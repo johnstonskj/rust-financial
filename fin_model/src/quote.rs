@@ -119,7 +119,7 @@ pub enum SeriesInterval {
 }
 
 /// A series of price ranges, used for both inter-day and intra-day data points.
-pub type PriceRangeSeries = Series<SeriesInterval, PriceRange>;
+pub type PriceRangeSeries = Series<SeriesInterval, Snapshot<PriceRange>>;
 
 // ------------------------------------------------------------------------------------------------
 // Public Traits
@@ -155,7 +155,7 @@ pub trait FetchPriceRangeSeries {
     /// Return a series of intra-day prices for the current trading day, or
     /// `RequestError::Unsupported` if the service provider does not provide
     /// intra-day data.
-    fn intra_day(&self, for_symbol: Symbol) -> RequestResult<Option<PriceRangeSeries>>;
+    fn intra_day(&self, for_symbol: Symbol, interval_minutes: u8) -> RequestResult<Option<PriceRangeSeries>>;
 
     /// Return a series of prices for the specified `SeriesInterval` going back from
     /// the current day; for example _the last five days_ (`SeriesInterval::FiveDays`).
