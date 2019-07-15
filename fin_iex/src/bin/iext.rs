@@ -2,8 +2,12 @@
 extern crate log;
 extern crate flexi_logger;
 extern crate num_format;
+#[macro_use]
+extern crate prettytable;
 
 use num_format::{SystemLocale, ToFormattedString};
+
+use prettytable::Table;
 
 use fin_model::prelude::*;
 use fin_model::classification::Code;
@@ -79,13 +83,15 @@ fn provider_commands(cmd: Command) {
                     println!("Delayed price: {} (by {} minutes)",
                              q.data.latest.price,
                              q.data.delayed_by);
-                    println!(" Price Ranges: {} ... {} @ {}",
-                             q.data.low,
-                             q.data.high,
-                             match q.data.volume {
-                                 None => "N/A".to_string(),
-                                 Some(v) => v.to_formatted_string(&locale)
-                             });
+                    let table = table!(
+                        ["Low", "High", "Volume"],
+                        [q.data.low,
+                         q.data.high,
+                         match q.data.volume {
+                            None => "N/A".to_string(),
+                            Some(v) => v.to_formatted_string(&locale)
+                         }]);
+                    table.printstd();
                 }
             }
         },
@@ -101,15 +107,17 @@ fn provider_commands(cmd: Command) {
                              q.data.latest.percentage.unwrap(),
                              q.date,
                              q.data.latest_source);
-                    println!("   Price Ranges: {} {} ... {} {} @ {}",
-                             q.data.range.open,
-                             q.data.range.low,
-                             q.data.range.high,
-                             q.data.range.close,
-                             match q.data.range.volume {
-                                 None => "N/A".to_string(),
-                                 Some(v) => v.to_formatted_string(&locale)
-                             });
+                    let table = table!(
+                        ["Open", "Low", "High", "Close", "Volume"],
+                        [q.data.range.open,
+                         q.data.range.low,
+                         q.data.range.high,
+                         q.data.range.close,
+                         match q.data.range.volume {
+                            None => "N/A".to_string(),
+                            Some(v) => v.to_formatted_string(&locale)
+                         }]);
+                    table.printstd();
                     if let Some(extended) = q.data.extended {
                         println!(" Extended price: {}",
                                  extended.price);
@@ -138,8 +146,10 @@ fn provider_commands(cmd: Command) {
                     println!("Call failed: {:?}", e);
                 },
                 Ok(series) => {
+                    let mut table = Table::new();
+                    table.add_row(row!["Date", "Open", "Low", "High", "Close", "Volume"]);
                     for range in series.series {
-                        println!("{} {} {} ... {} {} @ {}",
+                        table.add_row(row![
                             range.date.date(),
                             range.data.open,
                             range.data.low,
@@ -149,8 +159,9 @@ fn provider_commands(cmd: Command) {
                                 None => "N/A".to_string(),
                                 Some(v) => v.to_formatted_string(&locale)
                             }
-                        );
+                        ]);
                     }
+                    table.printstd();
                 }
             }
         },

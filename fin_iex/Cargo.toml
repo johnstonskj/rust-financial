@@ -28,3 +28,4 @@ flexi_logger = { version = "^0.13.2", features = ["colors", "specfile", "ziplogs
 clap = { version = "~2.33" }
 lazy_static = "1.3.0"
 regex = "1"
+prettytable-rs = "0.8.0"
