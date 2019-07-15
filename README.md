@@ -38,6 +38,8 @@ See also [fin_data/README](fin_data/README.md).
 ## Crate fin_iex
 
 This is an implementation of a number of the _request traits_ in `fin_model`
-calling the [IEX Cloud](https://iexcloud.io/).
+calling the [IEX Cloud](https://iexcloud.io/). There is an existing IEX based
+_proto_ crate, [iex-rs](https://github.com/samwho/iex-rs), I decided not to use it to 
+keep the focus on the transformation from low-level to fin_model API.
 
 See also [fin_iex/README](fin_iex/README.md).
