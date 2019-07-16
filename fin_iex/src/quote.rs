@@ -328,15 +328,17 @@ impl FetchPriceRangeSeries for IEXProvider {
         match response {
             Ok(values) => {
                 record_api_usage(ApiName::Historical, values.len() as u16);
-                let series: Vec<Snapshot<PriceRange>> = values.iter().map(|v|
-                    // TODO: fix this to unwrap safely
-                    historical_to_price_range(dc, v).unwrap()
+                let series: RequestResult<Vec<Snapshot<PriceRange>>> = values.iter().map(|v|
+                    historical_to_price_range(dc, v)
                 ).collect();
-                Ok(PriceRangeSeries {
-                    interval: interval,
-                    intra_interval: None,
-                    series: series
-                })
+                match series {
+                    Ok(data) => Ok(PriceRangeSeries {
+                        interval: interval,
+                        intra_interval: None,
+                        series: data
+                    }),
+                    Err(err) => Err(err)
+                }
             },
             Err(err) => {
                 println!("IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}", err);
