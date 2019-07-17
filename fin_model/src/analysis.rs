@@ -65,25 +65,39 @@ pub struct EPSConsensus {
 // Public Traits
 // ------------------------------------------------------------------------------------------------
 
+//use std::ops::{Add, Div};
+//
+//fn average<V, I: Iterator<Item = V>, T, C, FT, FC>(iter: I, f_total: FT, f_count: FC) -> T
+//    where V: Sized,
+//        T: Add<T>,
+//        C: Add<C> + Div<T>,
+//        FT: Fn(V) -> T,
+//        FC: Fn(V) -> C
+//{
+//    let (t, c) = iter.fold((0 as T, 0 as C), |(t, c), v|
+//        (t + f_total(v), c + f_count(v)));
+//    (c / t) as T
+//}
+
 impl Ratings {
 
     pub fn scaled_average(&self) -> f64 {
-        let total: Counter = self.ratings
+        let (count, total) = self.ratings
             .iter()
-            .map(|(_k, v)| *v)
-            .sum();
-        let weighted: u32 = self.ratings
-            .iter()
-            .map(|(k, v)|
-                match *k {
-                    RatingType::Buy => 1,
-                    RatingType::Outperform => 2,
-                    RatingType::Hold => 3,
-                    RatingType::Underperform => 4,
-                    RatingType::Sell => 5
-                } * *v)
-            .sum();
-        (weighted as f64) / (total as f64)
+            .fold(
+                (0, 0),
+                |(c, t), (k, v)|
+                    (
+                        c + *v,
+                        t + match *k {
+                            RatingType::Buy => 1,
+                            RatingType::Outperform => 2,
+                            RatingType::Hold => 3,
+                            RatingType::Underperform => 4,
+                            RatingType::Sell => 5
+                        } * *v
+                    ));
+        (total as f64) / (count as f64)
     }
 }
 
