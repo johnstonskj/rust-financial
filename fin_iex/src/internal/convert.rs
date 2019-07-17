@@ -32,7 +32,17 @@ pub fn date_from_timestamp(ts: f64) -> RequestResult<DateTime> {
     Ok(DateTime::from_timestamp(ts.trunc() as i64, 0))
 }
 
-pub fn date_from_string(date: &String) -> RequestResult<DateTime> {
+pub fn date_from_string(date: &String) -> RequestResult<Date> {
+    match date.parse::<Date>() {
+        Err(err) => {
+            warn!("doesn't look like a date: {}, error: {}", date, err);
+            Err(RequestError::BadResponseError)
+        },
+        Ok(dt) => Ok(dt)
+    }
+}
+
+pub fn datetime_from_date_string(date: &String) -> RequestResult<DateTime> {
     match format!("{}T00:00:00", date).parse::<DateTime>() {
         Err(err) => {
             warn!("doesn't look like a date/time: {}, error: {}", date, err);

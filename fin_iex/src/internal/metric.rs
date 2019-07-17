@@ -15,7 +15,11 @@ pub enum ApiName {
     DelayedQuote,
     Quote,
     Intraday,
-    Historical
+    Historical,
+    Peers,
+    TargetPrice,
+    ConsensusEPS,
+    ConsensusRatings
 }
 
 lazy_static! {
@@ -26,6 +30,10 @@ lazy_static! {
         m.insert(ApiName::DelayedQuote, 1);
         m.insert(ApiName::Intraday, 1);
         m.insert(ApiName::Historical, 10);
+        m.insert(ApiName::Peers, 500);
+        m.insert(ApiName::TargetPrice, 500);
+        m.insert(ApiName::ConsensusEPS, 10_000);
+        m.insert(ApiName::ConsensusRatings, 1_000);
         m
     };
 

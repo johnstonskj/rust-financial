@@ -383,7 +383,7 @@ fn intraday_to_price_range(dc: &String, v : &IEXIntradayPrice) -> RequestResult<
 
 fn historical_to_price_range(dc: &String, v : &IEXHistoricalPrice) -> RequestResult<Snapshot<PriceRange>> {
     Ok(Snapshot {
-        date: date_from_string(&v.date)?,
+        date: datetime_from_date_string(&v.date)?,
         data: PriceRange {
             open: price_from_float(dc, v.high)?,
             close: price_from_float(dc, v.high) ?,
