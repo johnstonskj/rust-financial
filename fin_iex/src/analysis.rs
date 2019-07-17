@@ -187,8 +187,8 @@ fn to_rating(v : &IEXRecommendationTrends) -> RequestResult<Bounded<Ratings>> {
     ratings.insert(RatingType::Buy, v.rating_buy as Counter);
     ratings.insert(RatingType::Hold, v.rating_hold as Counter);
     ratings.insert(RatingType::Sell, v.rating_sell as Counter);
-    ratings.insert(RatingType::Underweight, v.rating_underweight as Counter);
-    ratings.insert(RatingType::Overweight, v.rating_overweight as Counter);
+    ratings.insert(RatingType::Underperform, v.rating_underweight as Counter);
+    ratings.insert(RatingType::Outperform, v.rating_overweight as Counter);
 
     Ok(Bounded {
         start_date: date_from_timestamp(v.consensus_start_date)?,

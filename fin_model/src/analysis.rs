@@ -17,11 +17,23 @@ pub type Counter = u32;
 /// The type of analyst recommendation/position.
 #[derive(PartialEq, Eq, Hash)]
 pub enum RatingType {
+    /// Also known as strong buy and _on the recommended list_. Needless to say,
+    /// buy is a recommendation to purchase a specific security.
     Buy,
+    /// Also known as _moderate buy_, _accumulate_, and _overweight_. Outperform
+    /// is an analyst recommendation meaning a stock is expected to do slightly
+    /// better than the market return.
+    Outperform,
+    /// In general terms, a company with a hold recommendation is expected to
+    /// perform at the same pace as comparable companies or in-line with the market.
     Hold,
+    /// A recommendation that means a stock is expected to do slightly worse than
+    /// the overall stock market return. Underperform can also be expressed as
+    /// _moderate sell_, _weak hold_, and _underweight_.
+    Underperform,
+    /// Also known as strong sell, it's a recommendation to sell a security or
+    /// to liquidate an asset.
     Sell,
-    Underweight,
-    Overweight
 }
 
 /// The set of recommendation trends over some period of time.
@@ -52,6 +64,28 @@ pub struct EPSConsensus {
 // ------------------------------------------------------------------------------------------------
 // Public Traits
 // ------------------------------------------------------------------------------------------------
+
+impl Ratings {
+
+    pub fn scaled_average(&self) -> f64 {
+        let total: Counter = self.ratings
+            .iter()
+            .map(|(_k, v)| *v)
+            .sum();
+        let weighted: u32 = self.ratings
+            .iter()
+            .map(|(k, v)|
+                match *k {
+                    RatingType::Buy => 1,
+                    RatingType::Outperform => 2,
+                    RatingType::Hold => 3,
+                    RatingType::Underperform => 4,
+                    RatingType::Sell => 5
+                } * *v)
+            .sum();
+        (weighted as f64) / (total as f64)
+    }
+}
 
 /// This trait is implemented by providers to return a set of symbols that are expected
 /// to represent peer companies to `for_symbol`. This set of peers could be provided by
