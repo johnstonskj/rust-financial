@@ -35,6 +35,8 @@ pub mod analysis;
 
 pub mod classification;
 
+pub mod company;
+
 pub mod market;
 
 pub mod quote;
