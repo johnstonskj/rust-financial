@@ -62,6 +62,10 @@ pub enum RequestError {
 /// unspecified but the error is always `RequestError`.
 pub type RequestResult<T> = Result<T, RequestError>;
 
+// ------------------------------------------------------------------------------------------------
+// Trait Implementations
+// ------------------------------------------------------------------------------------------------
+
 impl RequestError {
 
     /// Return a `RequestError` from an HTTP status code as a `u16` value.

@@ -57,9 +57,11 @@ pub struct FiscalPeriod {
     /// the period within the fiscal year
     pub period: FinancialPeriod,
     /// the start date for the fiscal year
-    pub fiscal_year_start_date: DateTime
+    pub fiscal_year_start_date: Date
 }
 
+// ------------------------------------------------------------------------------------------------
+// Trait Implementations
 // ------------------------------------------------------------------------------------------------
 
 impl FinancialPeriod {
@@ -77,10 +79,6 @@ impl FinancialPeriod {
                 is_valid_year(*year)
         }
     }
-}
-
-fn is_valid_year(year: u16) -> bool {
-    year >= 1900 && year <= 9999
 }
 
 impl Display for FinancialPeriod {
@@ -152,6 +150,16 @@ impl FromStr for FinancialPeriod {
     }
 }
 
+// ------------------------------------------------------------------------------------------------
+// Private Functions
+// ------------------------------------------------------------------------------------------------
+
+fn is_valid_year(year: u16) -> bool {
+    year >= 1900 && year <= 9999
+}
+
+// ------------------------------------------------------------------------------------------------
+// Unit Tests
 // ------------------------------------------------------------------------------------------------
 
 #[cfg(test)]
