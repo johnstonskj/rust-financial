@@ -68,6 +68,7 @@ pub type RequestResult<T> = Result<T, RequestError>;
 
 impl RequestError {
     /// Return a `RequestError` from an HTTP status code as a `u16` value.
+    #[allow(ellipsis_inclusive_range_patterns)]
     pub fn from_u16(code: u16) -> Option<Self> {
         match code {
             100...299 => None,
