@@ -16,6 +16,10 @@ matrix:
   allow_failures:
     - rust: nightly
 
+script:
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+
 #script: |
 #  cargo build --verbose --all-features &&
 #  cargo test  --verbose --all-features &&
