@@ -3,6 +3,11 @@ name = "fin_data"
 version = "0.1.0"
 authors = ["Simon Johnston <johnstonskj@gmail.com>"]
 edition = "2018"
+description = "Registry implementations for common financial categories."
+repository = "https://github.com/johnstonskj/rust-financial.git"
+readme = "README.md"
+license = "MIT"
+keywords = ["financial", "SIC", "NAICS", "MIC"]
 
 [dependencies]
 fin_model = { path = "../fin_model" }

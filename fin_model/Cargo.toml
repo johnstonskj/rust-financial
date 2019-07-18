@@ -3,6 +3,14 @@ name = "fin_model"
 version = "0.1.0"
 authors = ["Simon Johnston <johnstonskj@gmail.com>"]
 edition = "2018"
+description = "The provider-neutral model for financial operations."
+repository = "https://github.com/johnstonskj/rust-financial.git"
+readme = "README.md"
+license = "MIT"
+keywords = ["financial", "stock", "quote", "company"]
+
+[badges]
+travis-ci = {repository = "johnstonskj/rust-financial"}
 
 [lib]
 crate-type = ["dylib"]

@@ -1,5 +1,4 @@
 [workspace]
-
 members = [
     "fin_model",
     "fin_data",
