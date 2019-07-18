@@ -16,10 +16,6 @@ matrix:
   allow_failures:
     - rust: nightly
 
-script:
-  - cargo build --verbose --all
-  - cargo test --verbose --all
-
 #script: |
 #  cargo build --verbose --all-features &&
 #  cargo test  --verbose --all-features &&
@@ -29,6 +25,10 @@ script:
 #  cargo doc   --verbose -p fin_iex   --all-features --no-deps &&
 #  cargo coveralls --verbose
 #  cargo doc-upload
+
+env:
+  global:
+    - RUST_BACKTRACE=1
 
 branches:
   only:
