@@ -38,11 +38,14 @@ matrix:
       - cargo clippy --all -- -D warnings
 
 script:
-  - cargo build --verbose --all &&
-  - cargo test  --verbose --all &&
+  - cargo build --verbose --all
+  - cargo test  --verbose --all
   - cargo doc   --verbose --package fin_model --no-deps
 #   cargo coveralls --verbose
-#   cargo doc-upload
+#   cargo doc-upload --verbose
+#   cargo package --verbose --manifest-path fin_model/Cargo.toml
+#   cargo package --verbose --manifest-path fin_data/Cargo.toml
+#   cargo package --verbose --manifest-path fin_iex/Cargo.toml
 
 branches:
   only:
