@@ -5,7 +5,7 @@ cache: cargo
 rust:
   - stable
   - beta
-  - 1.31.0 # 2018!
+  - 1.34.0
   - nightly
 
 os:
@@ -21,25 +21,28 @@ matrix:
   fast_finish: true
   allow_failures:
     - rust: nightly
+
   include:
-    - name: "rustfmt"
+    - name: format
       rust: stable
       before_script:
         - rustup component add rustfmt
       script:
         - cargo fmt --all -- --check
 
-script: |
-  cargo build --verbose --all &&
-  cargo test  --verbose --all &&
-  cargo doc   --verbose --package fin_model --no-deps
+    - name: style
+      rust: stable
+      install:
+      - rustup component add clippy
+      script:
+      - cargo clippy --all -- -D warnings
 
-#script: |
-#  cargo build --verbose --all-features &&
-#  cargo test  --verbose --all-features &&
-#  cargo test  --verbose --release --all-features &&
-#  cargo coveralls --verbose
-#  cargo doc-upload
+script:
+  - cargo build --verbose --all &&
+  - cargo test  --verbose --all &&
+  - cargo doc   --verbose --package fin_model --no-deps
+#   cargo coveralls --verbose
+#   cargo doc-upload
 
 branches:
   only:
