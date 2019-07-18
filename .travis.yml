@@ -26,15 +26,15 @@ matrix:
 #  cargo coveralls --verbose
 #  cargo doc-upload
 
-#env:
-#  global:
-#    - RUST_BACKTRACE=1
+env:
+  global:
+    - RUST_BACKTRACE=1
 
-#branches:
-#  only:
-#    - master
-#    - auto
+branches:
+  only:
+    - master
+    - auto
 
-#notifications:
-#  email:
-#    on_success: never
+notifications:
+  email:
+    on_success: never
