@@ -29,6 +29,7 @@ enum Command {
     None,
 }
 
+#[cfg(feature="customfeature")]
 fn main() {
     flexi_logger::Logger::with_env().start().unwrap();
     info!("iext::main started");
