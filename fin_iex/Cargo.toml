@@ -9,6 +9,9 @@ readme = "README.md"
 license = "MIT"
 keywords = ["financial", "stock", "quote", "company"]
 
+[badges]
+travis-ci = {repository = "johnstonskj/rust-financial"}
+
 [dependencies]
 # Peer dependencies
 fin_model = { path = "../fin_model" }

@@ -9,6 +9,9 @@ readme = "README.md"
 license = "MIT"
 keywords = ["financial", "SIC", "NAICS", "MIC"]
 
+[badges]
+travis-ci = {repository = "johnstonskj/rust-financial"}
+
 [dependencies]
 fin_model = { path = "../fin_model" }
 chrono = "0.4.7"
