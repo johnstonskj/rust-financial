@@ -3,30 +3,56 @@ cache: cargo
 sudo: false
 
 rust:
+  - 1.0.0
   - stable
   - beta
-before_script:
-  - rustup component add clippy
-  - rustup component add rustfmt
-script:
-  - cargo fmt --all -- --check
-  - cargo clippy
-#  - cargo clippy --all-targets --all-features -- -D warnings
-  - cargo build
-  - cargo test
-
-rust:
   - nightly
-before_script:
-   - rustup component add clippy --toolchain=nightly || cargo install --git https://github.com/rust-lang/rust-clippy/ --force clippy
-script:
-  - cargo build
-  - cargo test
 
 os:
   - linux
   - osx
 
 matrix:
+  fast_finish: true
   allow_failures:
-    - rust: nightly
+    - env: NAME='cargo-travis'
+  include:
+    - rust: stable
+      before_script:
+        - rustup component add rustfmt
+        - rustup component add clippy
+      script:
+        - cargo fmt -- --check
+        - cargo clippy -- -D clippy
+    - env: NAME='cargo-travis'
+      sudo: required # travis-ci/travis-ci#9061
+      before_script:
+        - export PATH=$HOME/.cargo/bin:$PATH
+        - cargo install cargo-update || echo "cargo-update already installed"
+        - cargo install cargo-travis || echo "cargo-travis already installed"
+        - cargo install-update -a
+      script:
+        - |
+          cargo build     --verbose &&
+          cargo test      --verbose &&
+          cargo coveralls --verbose
+        - |
+          cargo doc       --verbose
+          # cargo doc-upload
+      addons: # required for kcov
+        apt:
+          packages:
+            - libcurl4-openssl-dev
+            - libelf-dev
+            - libdw-dev
+            - binutils-dev
+            - cmake
+
+script: |
+  cargo build --verbose &&
+  cargo test  --verbose &&
+  cargo doc   --verbose
+
+branches:
+  only:
+    - master
