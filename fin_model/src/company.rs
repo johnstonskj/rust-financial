@@ -12,7 +12,7 @@ pub struct Security {
     pub market: String,
     pub security_name: String,
     pub issue_type: Option<String>,
-    pub sector: Option<String>
+    pub sector: Option<String>,
 }
 
 pub struct About {
@@ -22,12 +22,12 @@ pub struct About {
     pub description: String,
     pub logo_url: Option<String>,
     pub security: Security,
-    pub tags: Vec<String>
+    pub tags: Vec<String>,
 }
 
 pub enum ReportingPeriod {
     Quarter,
-    Annual
+    Annual,
 }
 
 pub struct IncomeStatement {
@@ -49,7 +49,7 @@ pub struct IncomeStatement {
     pub minority_interest: i64,
     pub equity_earnings: i64,
     pub net_income: i64,
-    pub net_income_to_shareholders: i64
+    pub net_income_to_shareholders: i64,
 }
 
 pub struct BalanceSheet {
@@ -88,7 +88,7 @@ pub struct BalanceSheet {
     pub capital_surplus: i64,
     pub other_shareholder_equity: i64,
     pub total_shareholder_equity: i64,
-    pub net_tangible_assets: i64
+    pub net_tangible_assets: i64,
 }
 
 pub struct Statistics {
@@ -127,7 +127,7 @@ pub struct Statistics {
     pub t5y_change_percentage: f64,
 
     pub ytd_change_percentage: f64,
-    pub max_change_percentage: f64
+    pub max_change_percentage: f64,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -135,20 +135,25 @@ pub struct Statistics {
 // ------------------------------------------------------------------------------------------------
 
 pub trait FetchCompanyInformation {
-
     fn about(&self, for_symbol: Symbol) -> RequestResult<About>;
 }
 
 pub trait FetchCompanyFinancials {
+    fn reported_income(
+        &self,
+        for_symbol: Symbol,
+        last: u8,
+        period: ReportingPeriod,
+    ) -> RequestResult<Vec<Snapshot<IncomeStatement>>>;
 
-    fn reported_income(&self, for_symbol: Symbol, last: u8, period: ReportingPeriod)
-        -> RequestResult<Vec<Snapshot<IncomeStatement>>>;
-
-    fn reported_balance_sheet(&self, for_symbol: Symbol, last: u8, period: ReportingPeriod)
-        -> RequestResult<Vec<Snapshot<BalanceSheet>>>;
+    fn reported_balance_sheet(
+        &self,
+        for_symbol: Symbol,
+        last: u8,
+        period: ReportingPeriod,
+    ) -> RequestResult<Vec<Snapshot<BalanceSheet>>>;
 }
 
 pub trait FetchCompanyStatistics {
-
     fn core_statistics(&self, for_symbol: Symbol) -> RequestResult<Statistics>;
 }

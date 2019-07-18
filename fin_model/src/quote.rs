@@ -40,7 +40,7 @@ pub struct PriceRange {
     /// lowest price within the market window
     pub low: Money,
     /// the (optional) volume of trading within the market window
-    pub volume: Option<u64>
+    pub volume: Option<u64>,
 }
 
 /// A returned, real-time or delayed, price quote.
@@ -81,7 +81,7 @@ pub enum QuoteSource {
     Delayed,
     Close,
     PreviousClose,
-    Unknown
+    Unknown,
 }
 
 /// A complete price quote, includes price, range, and potentially
@@ -98,7 +98,7 @@ pub struct QuotePriceFull {
     /// the (optional) previous close date
     pub previous_close_date: Option<DateTime>,
     /// the (optional) price during extended trading
-    pub extended: Option<QuotePrice>
+    pub extended: Option<QuotePrice>,
 }
 
 /// Represents a `QuotePrice` at a given point in time.
@@ -115,7 +115,7 @@ pub enum SeriesInterval {
     YearToDate,
     OneYear,
     TwoYears,
-    FiveYears
+    FiveYears,
 }
 
 /// A series of price ranges, used for both inter-day and intra-day data points.
@@ -132,7 +132,6 @@ pub type PriceRangeSeries = Series<SeriesInterval, Snapshot<PriceRange>>;
 /// not to provide real-time pricing and so the delayed option is usually a good
 /// fall-back for most cases.
 pub trait FetchPriceQuote {
-
     /// Return only the latest price, this may be delayed or real-time, simply
     /// the best available from the service provider.
     fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<Money>;
@@ -151,22 +150,35 @@ pub trait FetchPriceQuote {
 ///
 /// Not all providers may have an option for intra-day requests.
 pub trait FetchPriceRangeSeries {
-
     /// Return a series of intra-day prices for the current trading day, or
     /// `RequestError::Unsupported` if the service provider does not provide
     /// intra-day data.
-    fn intra_day(&self, for_symbol: Symbol, interval_minutes: u8) -> RequestResult<Option<PriceRangeSeries>>;
+    fn intra_day(
+        &self,
+        for_symbol: Symbol,
+        interval_minutes: u8,
+    ) -> RequestResult<Option<PriceRangeSeries>>;
 
     /// Return a series of prices for the specified `SeriesInterval` going back from
     /// the current day; for example _the last five days_ (`SeriesInterval::FiveDays`).
-    fn last(&self, for_symbol: Symbol, interval: SeriesInterval) -> RequestResult<PriceRangeSeries>;
+    fn last(&self, for_symbol: Symbol, interval: SeriesInterval)
+        -> RequestResult<PriceRangeSeries>;
 
     /// Return a series of prices for the specified `SeriesInterval` starting from
     /// `start_date`. If the start_date is less than `interval` from the current
     /// date the series will be truncated.
-    fn from(&self, for_symbol: Symbol, start_date: DateTime, interval: SeriesInterval) -> RequestResult<PriceRangeSeries>;
+    fn from(
+        &self,
+        for_symbol: Symbol,
+        start_date: DateTime,
+        interval: SeriesInterval,
+    ) -> RequestResult<PriceRangeSeries>;
 
     /// Return a series of prices for the specified financial period. The series
     /// may be truncated if the period is not yet completed.
-    fn for_period(&self, for_symbol: Symbol, period: FinancialPeriod) -> RequestResult<PriceRangeSeries>;
+    fn for_period(
+        &self,
+        for_symbol: Symbol,
+        period: FinancialPeriod,
+    ) -> RequestResult<PriceRangeSeries>;
 }

@@ -55,7 +55,7 @@ pub enum RequestError {
     /// `Provider`, or 3) may never be implemented. A provider implementation
     /// that returns this error should indicate in documentation why
     /// this is the case.
-    Unsupported
+    Unsupported,
 }
 
 /// The common `Result` returned from _request traits_; the success type is
@@ -67,7 +67,6 @@ pub type RequestResult<T> = Result<T, RequestError>;
 // ------------------------------------------------------------------------------------------------
 
 impl RequestError {
-
     /// Return a `RequestError` from an HTTP status code as a `u16` value.
     pub fn from_u16(code: u16) -> Option<Self> {
         match code {
@@ -82,7 +81,7 @@ impl RequestError {
             505 | 506 => Some(RequestError::BadRequestError),
             511 => Some(RequestError::AuthorizationError),
 
-            _ => Some(RequestError::CommunicationError)
+            _ => Some(RequestError::CommunicationError),
         }
     }
 }

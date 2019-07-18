@@ -15,6 +15,7 @@ def write_data_table(file_name):
 // Generated Data Table
 // ------------------------------------------------------------------------------------------------
 
+#[allow(clippy::unreadable_literal)]
 fn create_data_table() -> HashMap<String, Market> {
     let table: HashMap<String, Market> = 
     [""")

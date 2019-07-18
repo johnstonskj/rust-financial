@@ -2,17 +2,17 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use serde;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use fin_model::prelude::*;
 use fin_model::analysis::*;
+use fin_model::prelude::*;
 use fin_model::reporting::FinancialPeriod;
 use fin_model::symbol::is_valid;
 
-use crate::IEXProvider;
 use crate::internal::convert::*;
-use crate::internal::metric::{ApiName, record_api_use};
+use crate::internal::metric::{record_api_use, ApiName};
 use crate::internal::request;
+use crate::IEXProvider;
 
 // ------------------------------------------------------------------------------------------------
 // API Types (internal)
@@ -26,7 +26,7 @@ struct IEXPriceTarget {
     price_target_average: f64,
     price_target_high: f64,
     price_target_low: f64,
-    number_of_analysts: f64
+    number_of_analysts: f64,
 }
 
 #[serde(rename_all = "camelCase")]
@@ -41,14 +41,14 @@ struct IEXRecommendationTrends {
     rating_sell: f64,
     rating_overweight: f64,
     rating_underweight: f64,
-    rating_scale_mark: f64
+    rating_scale_mark: f64,
 }
 
 #[serde(rename_all = "camelCase")]
 #[derive(Serialize, Deserialize, Debug)]
 struct IEXEstimates {
     symbol: String,
-    estimates: Vec<IEXEstimateData>
+    estimates: Vec<IEXEstimateData>,
 }
 
 #[serde(rename_all = "camelCase")]
@@ -59,7 +59,7 @@ struct IEXEstimateData {
     number_of_estimates: f64,
     fiscal_period: String,
     fiscal_end_date: String,
-    report_date : String
+    report_date: String,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -67,21 +67,18 @@ struct IEXEstimateData {
 // ------------------------------------------------------------------------------------------------
 
 impl Peers for IEXProvider {
-
     fn peers(&self, for_symbol: Symbol) -> RequestResult<Symbols> {
         debug!("IEXProvider::<Peers>::peers for_symbol: {}", for_symbol);
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("/stock/{}/peers", for_symbol),
-            None);
+        let api_url = self.make_api_url(format!("/stock/{}/peers", for_symbol), None);
 
         let response: RequestResult<Symbols> = request::make_json_call(api_url);
         match response {
             Ok(values) => {
                 record_api_use(ApiName::Peers);
                 Ok(values)
-            },
+            }
             Err(err) => {
                 println!("IEXProvider::<Peers>::peers returned error: {:?}", err);
                 Err(err)
@@ -91,14 +88,14 @@ impl Peers for IEXProvider {
 }
 
 impl AnalystRecommendations for IEXProvider {
-
     fn target_price(&self, for_symbol: Symbol) -> RequestResult<Snapshot<PriceTarget>> {
-        debug!("IEXProvider::<AnalystRecommendations>::target_price for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<AnalystRecommendations>::target_price for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("/stock/{}/price-target", for_symbol),
-            None);
+        let api_url = self.make_api_url(format!("/stock/{}/price-target", for_symbol), None);
 
         let response: RequestResult<IEXPriceTarget> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
@@ -111,67 +108,82 @@ impl AnalystRecommendations for IEXProvider {
                         high: price_from_float(dc, target.price_target_high)?,
                         low: price_from_float(dc, target.price_target_low)?,
                         average: price_from_float(dc, target.price_target_average)?,
-                        number_of_analysts: target.number_of_analysts as u32
-                    }
+                        number_of_analysts: target.number_of_analysts as u32,
+                    },
                 })
-            },
+            }
             Err(err) => {
-                println!("IEXProvider::<AnalystRecommendations>::target_price returned error: {:?}", err);
+                println!(
+                    "IEXProvider::<AnalystRecommendations>::target_price returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
     fn consensus_rating(&self, for_symbol: Symbol) -> RequestResult<Vec<Bounded<Ratings>>> {
-        debug!("IEXProvider::<AnalystRecommendations>::consensus_rating for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<AnalystRecommendations>::consensus_rating for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("/stock/{}/recommendation-trends", for_symbol),
-            None);
+        let api_url =
+            self.make_api_url(format!("/stock/{}/recommendation-trends", for_symbol), None);
 
-        let response: RequestResult<Vec<IEXRecommendationTrends>> = request::make_json_call(api_url);
+        let response: RequestResult<Vec<IEXRecommendationTrends>> =
+            request::make_json_call(api_url);
         match response {
             Ok(consensus) => {
                 record_api_use(ApiName::ConsensusRatings);
-                let series: RequestResult<Vec<Bounded<Ratings>>> = consensus.iter().map(|v|
-                    to_rating(v)
-                ).collect();
+                let series: RequestResult<Vec<Bounded<Ratings>>> =
+                    consensus.iter().map(|v| to_rating(v)).collect();
                 match series {
                     Ok(data) => Ok(data),
-                    Err(err) => Err(err)
+                    Err(err) => Err(err),
                 }
-            },
+            }
             Err(err) => {
-                println!("IEXProvider::<AnalystRecommendations>::consensus_rating returned error: {:?}", err);
+                println!(
+                    "IEXProvider::<AnalystRecommendations>::consensus_rating returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
     fn consensus_eps(&self, for_symbol: Symbol) -> RequestResult<Vec<EPSConsensus>> {
-        debug!("IEXProvider::<AnalystRecommendations>::consensus_eps for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<AnalystRecommendations>::consensus_eps for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("/stock/{}/recommendation-trends", for_symbol),
-            None);
+        let api_url =
+            self.make_api_url(format!("/stock/{}/recommendation-trends", for_symbol), None);
 
         let response: RequestResult<IEXEstimates> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
         match response {
             Ok(estimates) => {
                 record_api_use(ApiName::ConsensusEPS);
-                let series: RequestResult<Vec<EPSConsensus>> = estimates.estimates.iter().map(|v|
-                    to_estimate(dc, v)
-                ).collect();
+                let series: RequestResult<Vec<EPSConsensus>> = estimates
+                    .estimates
+                    .iter()
+                    .map(|v| to_estimate(dc, v))
+                    .collect();
                 match series {
                     Ok(data) => Ok(data),
-                    Err(err) => Err(err)
+                    Err(err) => Err(err),
                 }
-            },
+            }
             Err(err) => {
-                println!("IEXProvider::<AnalystRecommendations>::consensus_eps returned error: {:?}", err);
+                println!(
+                    "IEXProvider::<AnalystRecommendations>::consensus_eps returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
@@ -182,7 +194,7 @@ impl AnalystRecommendations for IEXProvider {
 // Private Implementations
 // ------------------------------------------------------------------------------------------------
 
-fn to_rating(v : &IEXRecommendationTrends) -> RequestResult<Bounded<Ratings>> {
+fn to_rating(v: &IEXRecommendationTrends) -> RequestResult<Bounded<Ratings>> {
     let mut ratings: HashMap<RatingType, Counter> = HashMap::new();
     ratings.insert(RatingType::Buy, v.rating_buy as Counter);
     ratings.insert(RatingType::Hold, v.rating_hold as Counter);
@@ -195,12 +207,12 @@ fn to_rating(v : &IEXRecommendationTrends) -> RequestResult<Bounded<Ratings>> {
         end_date: date_from_timestamp(v.consensus_end_date)?,
         data: Ratings {
             ratings,
-            scale_mark: Some(v.rating_scale_mark as f32)
-        }
+            scale_mark: Some(v.rating_scale_mark as f32),
+        },
     })
 }
 
-fn to_estimate(dc: &String, v : &IEXEstimateData) -> RequestResult<EPSConsensus> {
+fn to_estimate(dc: &String, v: &IEXEstimateData) -> RequestResult<EPSConsensus> {
     Ok(EPSConsensus {
         consensus: price_from_float(dc, v.consensus_eps)?,
         number_of_estimates: v.number_of_estimates as Counter,

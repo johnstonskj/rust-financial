@@ -2,8 +2,8 @@
 Conversion functions from IEX to fin_model structures.
 */
 
-use steel_cent::currency::Currency;
 use steel_cent::currency::with_code;
+use steel_cent::currency::Currency;
 
 use regex::Regex;
 
@@ -37,8 +37,8 @@ pub fn date_from_string(date: &String) -> RequestResult<Date> {
         Err(err) => {
             warn!("doesn't look like a date: {}, error: {}", date, err);
             Err(RequestError::BadResponseError)
-        },
-        Ok(dt) => Ok(dt)
+        }
+        Ok(dt) => Ok(dt),
     }
 }
 
@@ -47,18 +47,21 @@ pub fn datetime_from_date_string(date: &String) -> RequestResult<DateTime> {
         Err(err) => {
             warn!("doesn't look like a date/time: {}, error: {}", date, err);
             Err(RequestError::BadResponseError)
-        },
-        Ok(dt) => Ok(dt)
+        }
+        Ok(dt) => Ok(dt),
     }
 }
 
 pub fn datetime_from_string(date: &String, time: &String) -> RequestResult<DateTime> {
     match format!("{}T{}", date, time).parse::<DateTime>() {
         Err(err) => {
-            warn!("doesn't look like a date/time: {} {}, error: {}", date, time, err);
+            warn!(
+                "doesn't look like a date/time: {} {}, error: {}",
+                date, time, err
+            );
             Err(RequestError::BadResponseError)
-        },
-        Ok(dt) => Ok(dt)
+        }
+        Ok(dt) => Ok(dt),
     }
 }
 
@@ -71,19 +74,21 @@ pub fn price_from_string(currency: &String, price: &String) -> RequestResult<Mon
         None => {
             warn!("doesn't look like a float: '{}'", price);
             Err(RequestError::BadResponseError)
-        },
+        }
         Some(captures) => {
             let currency: Currency = with_code(currency).unwrap();
             if let Some(_) = captures.get(2) {
                 Ok(Money::of_major_minor(
                     currency,
                     captures[1].parse::<i32>().unwrap(),
-                    captures[3].parse::<i32>().unwrap()))
+                    captures[3].parse::<i32>().unwrap(),
+                ))
             } else {
                 Ok(Money::of_major_minor(
                     currency,
                     captures[1].parse::<i32>().unwrap(),
-                    0))
+                    0,
+                ))
             }
         }
     }

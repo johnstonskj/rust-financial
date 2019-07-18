@@ -9,6 +9,7 @@ def write_data_table(file_name):
 // Generated Data Table
 // ------------------------------------------------------------------------------------------------
 
+#[allow(clippy::unreadable_literal)]
 fn create_data_table() -> HashMap<u16, Code<u16>> {
     let table: HashMap<u16, Code<u16>> = 
     [""")

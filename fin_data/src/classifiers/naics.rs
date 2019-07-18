@@ -6,15 +6,15 @@ The data for this file was generated automatically.
 
 use std::collections::HashMap;
 
-use fin_model::prelude::*;
 use fin_model::classification::Code;
+use fin_model::prelude::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
 pub struct Scheme {
-    codes: HashMap<u32, Code<u32>>
+    codes: HashMap<u32, Code<u32>>,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -22,9 +22,10 @@ pub struct Scheme {
 // ------------------------------------------------------------------------------------------------
 
 impl Registry<u32, Code<u32>> for Scheme {
-
     fn new() -> Self {
-        Scheme { codes: create_data_table() }
+        Scheme {
+            codes: create_data_table(),
+        }
     }
 
     fn name(&self) -> String {
@@ -65,6 +66,7 @@ impl Registry<u32, Code<u32>> for Scheme {
 // Generated Data Table
 // ------------------------------------------------------------------------------------------------
 
+#[allow(clippy::unreadable_literal)]
 fn create_data_table() -> HashMap<u32, Code<u32>> {
     let table: HashMap<u32, Code<u32>> = 
     [
@@ -11071,4 +11073,3 @@ fn create_data_table() -> HashMap<u32, Code<u32>> {
     ].iter().cloned().collect();
     table
 }
-

@@ -23,6 +23,5 @@ pub struct Code<T> {
     /// the parent code, allowing for simple hierarchy
     pub parent_code: Option<T>,
     /// a description of this code
-    pub description: String
+    pub description: String,
 }
-

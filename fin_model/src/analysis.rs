@@ -47,9 +47,9 @@ pub struct Ratings {
 /// Consensus price targets; high, low, and average.
 pub struct PriceTarget {
     pub high: Money,
-    pub low:  Money,
+    pub low: Money,
     pub average: Money,
-    pub number_of_analysts: Counter
+    pub number_of_analysts: Counter,
 }
 
 /// Consensus Earnings per Share (EPS) targets for some fiscal period.
@@ -58,45 +58,27 @@ pub struct EPSConsensus {
     pub number_of_estimates: Counter,
     pub fiscal_period: FinancialPeriod,
     pub fiscal_end_date: Date,
-    pub next_report_date: Date
+    pub next_report_date: Date,
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Traits
 // ------------------------------------------------------------------------------------------------
 
-//use std::ops::{Add, Div};
-//
-//fn average<V, I: Iterator<Item = V>, T, C, FT, FC>(iter: I, f_total: FT, f_count: FC) -> T
-//    where V: Sized,
-//        T: Add<T>,
-//        C: Add<C> + Div<T>,
-//        FT: Fn(V) -> T,
-//        FC: Fn(V) -> C
-//{
-//    let (t, c) = iter.fold((0 as T, 0 as C), |(t, c), v|
-//        (t + f_total(v), c + f_count(v)));
-//    (c / t) as T
-//}
-
 impl Ratings {
-
     pub fn scaled_average(&self) -> f64 {
-        let (count, total) = self.ratings
-            .iter()
-            .fold(
-                (0, 0),
-                |(c, t), (k, v)|
-                    (
-                        c + *v,
-                        t + match *k {
-                            RatingType::Buy => 1,
-                            RatingType::Outperform => 2,
-                            RatingType::Hold => 3,
-                            RatingType::Underperform => 4,
-                            RatingType::Sell => 5
-                        } * *v
-                    ));
+        let (count, total) = self.ratings.iter().fold((0, 0), |(c, t), (k, v)| {
+            (
+                c + *v,
+                t + match *k {
+                    RatingType::Buy => 1,
+                    RatingType::Outperform => 2,
+                    RatingType::Hold => 3,
+                    RatingType::Underperform => 4,
+                    RatingType::Sell => 5,
+                } * *v,
+            )
+        });
         (total as f64) / (count as f64)
     }
 }
@@ -105,14 +87,12 @@ impl Ratings {
 /// to represent peer companies to `for_symbol`. This set of peers could be provided by
 /// the market or the service provider itself.
 pub trait Peers {
-
     /// Return a set of peer symbols.
     fn peers(&self, for_symbol: Symbol) -> RequestResult<Symbols>;
 }
 
 /// This trait is implemented by providers to return various analyst recommendations.
 pub trait AnalystRecommendations {
-
     fn target_price(&self, for_symbol: Symbol) -> RequestResult<Snapshot<PriceTarget>>;
 
     fn consensus_rating(&self, for_symbol: Symbol) -> RequestResult<Vec<Bounded<Ratings>>>;
