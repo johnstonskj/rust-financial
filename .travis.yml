@@ -9,7 +9,11 @@ rust:
 os:
   - linux
   - osx
-#  - windows
+  - windows
+
+env:
+  global:
+    - RUST_BACKTRACE=1
 
 matrix:
   fast_finish: true
@@ -17,22 +21,18 @@ matrix:
     - rust: nightly
 
 script:
-  - cargo build --verbose
-  - cargo test --verbose
+  - cargo build --verbose -all
+  - cargo test  --verbose -all
+  - cargo doc   --verbose -p fin_model --no-deps &&
+    cargo doc   --verbose -p fin_data  --no-deps &&
+    cargo doc   --verbose -p fin_iex   --no-deps &&
 
 #script: |
 #  cargo build --verbose --all-features &&
 #  cargo test  --verbose --all-features &&
 #  cargo test  --verbose --release --all-features &&
-#  cargo doc   --verbose -p fin_model --all-features --no-deps &&
-#  cargo doc   --verbose -p fin_data  --all-features --no-deps &&
-#  cargo doc   --verbose -p fin_iex   --all-features --no-deps &&
 #  cargo coveralls --verbose
 #  cargo doc-upload
-
-env:
-  global:
-    - RUST_BACKTRACE=1
 
 branches:
   only:
