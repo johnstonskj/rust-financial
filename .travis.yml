@@ -20,12 +20,10 @@ matrix:
   allow_failures:
     - rust: nightly
 
-script:
-  - cargo build --verbose -all
-  - cargo test  --verbose -all
-  - cargo doc   --verbose -p fin_model --no-deps &&
-    cargo doc   --verbose -p fin_data  --no-deps &&
-    cargo doc   --verbose -p fin_iex   --no-deps &&
+script: |
+  cargo build --verbose --all &&
+  cargo test  --verbose --all &&
+  cargo doc   --verbose --all --no-deps
 
 #script: |
 #  cargo build --verbose --all-features &&
