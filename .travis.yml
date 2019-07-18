@@ -1,9 +1,11 @@
 language: rust
 sudo: false
+cache: cargo
 
 rust:
   - stable
   - beta
+  - 1.31.0 # 2018!
   - nightly
 
 os:
@@ -19,11 +21,18 @@ matrix:
   fast_finish: true
   allow_failures:
     - rust: nightly
+  include:
+    - name: "rustfmt"
+      rust: stable
+      before_script:
+        - rustup component add rustfmt
+      script:
+        - cargo fmt --all -- --check
 
 script: |
   cargo build --verbose --all &&
   cargo test  --verbose --all &&
-  cargo doc   --verbose --all --no-deps
+  cargo doc   --verbose --package fin_model --no-deps
 
 #script: |
 #  cargo build --verbose --all-features &&
