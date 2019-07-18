@@ -9,25 +9,32 @@ rust:
 os:
   - linux
   - osx
+#  - windows
 
 matrix:
-  fast_finish: true
+#  fast_finish: true
   allow_failures:
     - rust: nightly
 
-
-script: |
-  cargo build --verbose &&
-  cargo test  --verbose &&
-  cargo doc   --verbose --all-features --no-deps
+#script: |
+#  cargo build --verbose --all-features &&
+#  cargo test  --verbose --all-features &&
+#  cargo test  --verbose --release --all-features &&
+#  cargo doc   --verbose -p fin_model --all-features --no-deps &&
+#  cargo doc   --verbose -p fin_data  --all-features --no-deps &&
+#  cargo doc   --verbose -p fin_iex   --all-features --no-deps &&
 #  cargo coveralls --verbose
 #  cargo doc-upload
 
-branches:
-  only:
-    - master
-    - auto
+#env:
+#  global:
+#    - RUST_BACKTRACE=1
 
-notifications:
-  email:
-    on_success: never
+#branches:
+#  only:
+#    - master
+#    - auto
+
+#notifications:
+#  email:
+#    on_success: never
