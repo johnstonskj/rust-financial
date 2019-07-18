@@ -41,7 +41,7 @@ pub struct QualifiedSymbol {
     /// the symbol for the market that qualifies `symbol`
     pub market: Symbol,
     /// the target security symbol
-    pub symbol: Symbol
+    pub symbol: Symbol,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ macro_rules! assert_is_valid {
     ($symbol:expr) => {
         match is_valid($symbol.to_string()) {
             true => (),
-            false => return Err(RequestError::BadSymbolError($symbol))
+            false => return Err(RequestError::BadSymbolError($symbol)),
         };
     };
 }

@@ -7,15 +7,15 @@ The data for this file was generated from
 
 use std::collections::HashMap;
 
-use fin_model::prelude::*;
 use fin_model::market::{Market, MarketStatus};
+use fin_model::prelude::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
 pub struct ISORegistry {
-    registry: HashMap<String, Market>
+    registry: HashMap<String, Market>,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -23,18 +23,27 @@ pub struct ISORegistry {
 // ------------------------------------------------------------------------------------------------
 
 impl Registry<String, Market> for ISORegistry {
-
     fn new() -> Self {
-        ISORegistry { registry: create_data_table() }
+        ISORegistry {
+            registry: create_data_table(),
+        }
     }
 
-    fn name(&self) -> String { "ISO 10383 - Market Identifier Code".to_string() }
+    fn name(&self) -> String {
+        "ISO 10383 - Market Identifier Code".to_string()
+    }
 
-    fn acronym(&self) -> String { "MIC".to_string() }
+    fn acronym(&self) -> String {
+        "MIC".to_string()
+    }
 
-    fn source(&self) -> String { "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string() }
+    fn source(&self) -> String {
+        "https://www.iso20022.org/sites/default/files/ISO10383_MIC/ISO10383_MIC.xls".to_string()
+    }
 
-    fn governing_body(&self) -> String { "International Organization for Standardization (ISO)".to_string() }
+    fn governing_body(&self) -> String {
+        "International Organization for Standardization (ISO)".to_string()
+    }
 
     fn last_updated(&self) -> Option<Date> {
         Some(Date::from_ymd(2019, 6, 24))
@@ -33350,4 +33359,3 @@ derivatives.".to_string())
     ].iter().cloned().collect();
     table
 }
-

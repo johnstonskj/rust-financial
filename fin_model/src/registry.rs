@@ -21,9 +21,10 @@ use chrono::NaiveDate as Date; /* match this to prelude */
 
 /// A trait to support the lookup of standardized codes.
 pub trait Registry<C: std::fmt::Display, T> {
-
     /// Create a new instance.
-    fn new() -> Self where Self: Sized;
+    fn new() -> Self
+    where
+        Self: Sized;
 
     /// Name of the classification scheme itself.
     fn name(&self) -> String;
@@ -45,10 +46,14 @@ pub trait Registry<C: std::fmt::Display, T> {
     fn next_publication(&self) -> Option<Date>;
 
     /// Return a description of the code, or `None` if not present.
-    fn get(&self, code: C) -> Option<&T> where Self: Sized;
+    fn get(&self, code: C) -> Option<&T>
+    where
+        Self: Sized;
 
     /// Return a list of child descriptions for the parent code, or
     /// `None` if either no children are found, the parent code is not
     /// valid, or the scheme does not support hierarchy.
-    fn get_children(&self, parent_code: C) -> Option<Vec<&T>> where Self: Sized;
+    fn get_children(&self, parent_code: C) -> Option<Vec<&T>>
+    where
+        Self: Sized;
 }

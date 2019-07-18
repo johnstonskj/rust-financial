@@ -22,7 +22,7 @@ use crate::prelude::*;
 pub enum MarketStatus {
     Active,
     Deleted,
-    NotOperational
+    NotOperational,
 }
 
 /// Details of a market contained in the standard's Excel-based registry.
@@ -46,5 +46,5 @@ pub struct Market {
     pub website: Option<String>,
     pub last_updated: Option<Date>,
     pub created: Option<Date>,
-    pub comments: Option<String>
+    pub comments: Option<String>,
 }

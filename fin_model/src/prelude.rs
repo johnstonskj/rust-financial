@@ -24,7 +24,7 @@ pub use chrono::NaiveDateTime as DateTime;
 #[derive(Debug)]
 pub struct Snapshot<T> {
     pub date: DateTime,
-    pub data: T
+    pub data: T,
 }
 
 /// A time-bounded value; `data` with a `start_date` and `end_date`
@@ -33,7 +33,7 @@ pub struct Snapshot<T> {
 pub struct Bounded<T> {
     pub start_date: DateTime,
     pub end_date: DateTime,
-    pub data: T
+    pub data: T,
 }
 
 /// Represents a `series` of data points, over the time period indicated
@@ -45,7 +45,7 @@ pub struct Series<I, T> {
     /// the interval between data points within the overall `interval`
     pub intra_interval: Option<Duration>,
     /// the actual data points in increasing time order
-    pub series: Vec<T>
+    pub series: Vec<T>,
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -59,4 +59,3 @@ pub use crate::registry::Registry;
 pub use crate::request::{RequestError, RequestResult};
 
 pub use crate::symbol::{Symbol, Symbols};
-

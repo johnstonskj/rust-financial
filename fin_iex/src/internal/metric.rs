@@ -5,9 +5,9 @@ Wrapper around the external metrics crate.
 use std::collections::HashMap;
 
 use log::Level;
-use metrics::{Controller, Receiver};
-use metrics::recorders::TextRecorder;
 use metrics::exporters::LogExporter;
+use metrics::recorders::TextRecorder;
+use metrics::{Controller, Receiver};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum ApiName {
@@ -19,7 +19,7 @@ pub enum ApiName {
     Peers,
     TargetPrice,
     ConsensusEPS,
-    ConsensusRatings
+    ConsensusRatings,
 }
 
 lazy_static! {
@@ -36,15 +36,11 @@ lazy_static! {
         m.insert(ApiName::ConsensusRatings, 1_000);
         m
     };
-
     static ref RECEIVER: Receiver = Receiver::builder()
         .build()
         .expect("failed to create receiver");
-
-    static ref EXPORTER: LogExporter<Controller, TextRecorder> = LogExporter::new(
-        RECEIVER.get_controller(),
-        TextRecorder::new(),
-        Level::Info);
+    static ref EXPORTER: LogExporter<Controller, TextRecorder> =
+        LogExporter::new(RECEIVER.get_controller(), TextRecorder::new(), Level::Info);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -58,8 +54,12 @@ pub fn record_api_use(api: ApiName) {
 pub fn record_api_usage(api: ApiName, count: u16) {
     debug!("recording API usage for {:?} x {}", api, count);
     let cost_per_call = COSTS.get(&api).unwrap();
-    RECEIVER.get_sink().record_count("IEX::API::total_cost", (count * cost_per_call) as u64);
-    RECEIVER.get_sink().record_count(format!("IEX::API::{:?}::count", api), count as u64);
+    RECEIVER
+        .get_sink()
+        .record_count("IEX::API::total_cost", (count * cost_per_call) as u64);
+    RECEIVER
+        .get_sink()
+        .record_count(format!("IEX::API::{:?}::count", api), count as u64);
 }
 
 pub fn record_to_log() {

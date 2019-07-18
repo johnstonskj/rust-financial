@@ -16,8 +16,9 @@ use crate::request::RequestResult;
 /// This trait allows a client to create a provider instance as
 /// well as introspect basic descriptive properties.
 pub trait Provider
-    where Self: std::marker::Sized {
-
+where
+    Self: std::marker::Sized,
+{
     /// Create a new instance, performing any initialization which _may_
     /// involve a network operation, to perform authentication for example.
     fn new() -> RequestResult<Self>;

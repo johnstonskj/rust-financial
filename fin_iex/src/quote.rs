@@ -5,17 +5,17 @@ IEX API wrapper
 use std::time::Duration;
 
 use serde;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use fin_model::prelude::*;
 use fin_model::quote::*;
 use fin_model::reporting::FinancialPeriod;
 use fin_model::symbol::is_valid;
 
-use crate::IEXProvider;
 use crate::internal::convert::*;
-use crate::internal::metric::{ApiName, record_api_use, record_api_usage};
+use crate::internal::metric::{record_api_usage, record_api_use, ApiName};
 use crate::internal::request;
+use crate::IEXProvider;
 
 // ------------------------------------------------------------------------------------------------
 // API Types (internal)
@@ -84,7 +84,7 @@ struct IEXDelayedQuote {
     delayed_size: f64,
     delayed_price_time: f64,
     processed_time: f64,
-    total_volume: Option<f64>
+    total_volume: Option<f64>,
 }
 
 #[serde(rename_all = "camelCase")]
@@ -112,7 +112,7 @@ pub struct IEXHistoricalPrice {
 
     pub change: f64,
     pub change_percent: f64,
-    pub change_over_time: f64
+    pub change_over_time: f64,
 }
 
 type IEXHistoricalPrices = Vec<IEXHistoricalPrice>;
@@ -144,7 +144,7 @@ pub struct IEXIntradayPrice {
 
     pub change: f64,
     pub change_percent: f64,
-    pub change_over_time: f64
+    pub change_over_time: f64,
 }
 
 type IEXIntradayPrices = Vec<IEXIntradayPrice>;
@@ -154,41 +154,44 @@ type IEXIntradayPrices = Vec<IEXIntradayPrice>;
 // ------------------------------------------------------------------------------------------------
 
 impl FetchPriceQuote for IEXProvider {
-
     fn latest_price_only(&self, for_symbol: Symbol) -> RequestResult<Money> {
-        debug!("IEXProvider::<FetchPriceQuote>::latest_price_only for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<FetchPriceQuote>::latest_price_only for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("stock/{}/price", for_symbol),
-            None);
+        let api_url = self.make_api_url(format!("stock/{}/price", for_symbol), None);
 
         match request::make_api_call(api_url) {
-            Ok(raw_price) =>
-                match price_from_string(self.get_default_currency(), &raw_price) {
-                    Ok(price) => {
-                        record_api_use(ApiName::Price);
-                        Ok(price)
-                    },
-                    Err(err) => {
-                        warn!("IEXProvider::<FetchPriceQuote>::latest_price_only parser error: {:?} in {}", err, raw_price);
-                        Err(RequestError::BadResponseError)
-                    }
-                },
+            Ok(raw_price) => match price_from_string(self.get_default_currency(), &raw_price) {
+                Ok(price) => {
+                    record_api_use(ApiName::Price);
+                    Ok(price)
+                }
+                Err(err) => {
+                    warn!("IEXProvider::<FetchPriceQuote>::latest_price_only parser error: {:?} in {}", err, raw_price);
+                    Err(RequestError::BadResponseError)
+                }
+            },
             Err(err) => {
-                warn!("IEXProvider::<FetchPriceQuote>::latest_price_only returned error: {:?}", err);
+                warn!(
+                    "IEXProvider::<FetchPriceQuote>::latest_price_only returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
     fn real_time(&self, for_symbol: Symbol) -> RequestResult<Quote> {
-        debug!("IEXProvider::<FetchPriceQuote>::real_time for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<FetchPriceQuote>::real_time for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("stock/{}/quote", for_symbol),
-            None);
+        let api_url = self.make_api_url(format!("stock/{}/quote", for_symbol), None);
 
         let response: RequestResult<IEXQuote> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
@@ -208,7 +211,7 @@ impl FetchPriceQuote for IEXProvider {
                         latest: QuotePrice {
                             price: price_from_float(dc, quote.latest_price)?,
                             change: Some(price_from_float(dc, quote.change)?),
-                            percentage: Some(quote.change_percent)
+                            percentage: Some(quote.change_percent),
                         },
                         latest_source: source_from_string(&quote.latest_source),
                         trade_size: None,
@@ -216,25 +219,29 @@ impl FetchPriceQuote for IEXProvider {
                         extended: Some(QuotePrice {
                             price: price_from_float(dc, quote.extended_price)?,
                             change: None,
-                            percentage: None
-                        })
-                    }
+                            percentage: None,
+                        }),
+                    },
                 })
-            },
+            }
             Err(err) => {
-                warn!("IEXProvider::<FetchPriceQuote>::real_time returned error: {:?}", err);
+                warn!(
+                    "IEXProvider::<FetchPriceQuote>::real_time returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
     fn delayed(&self, for_symbol: Symbol) -> RequestResult<DelayedQuote> {
-        debug!("IEXProvider::<FetchPriceQuote>::delayed for_symbol: {}", for_symbol);
+        debug!(
+            "IEXProvider::<FetchPriceQuote>::delayed for_symbol: {}",
+            for_symbol
+        );
         assert_is_valid!(for_symbol);
 
-        let api_url = self.make_api_url(
-            format!("stock/{}/delayed-quote", for_symbol),
-            None);
+        let api_url = self.make_api_url(format!("stock/{}/delayed-quote", for_symbol), None);
 
         let response: RequestResult<IEXDelayedQuote> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
@@ -247,7 +254,7 @@ impl FetchPriceQuote for IEXProvider {
                         latest: QuotePrice {
                             price: price_from_float(dc, quote.delayed_price)?,
                             change: None,
-                            percentage: None
+                            percentage: None,
                         },
                         delayed_by: 15,
                         high: price_from_float(dc, quote.high)?,
@@ -255,14 +262,17 @@ impl FetchPriceQuote for IEXProvider {
                         trade_size: Some(quote.delayed_size as u64),
                         volume: match quote.total_volume {
                             None => None,
-                            Some(v) => Some(v as u64)
+                            Some(v) => Some(v as u64),
                         },
-                        previous_close_date: None
-                    }
+                        previous_close_date: None,
+                    },
                 })
-            },
+            }
             Err(err) => {
-                warn!("IEXProvider::<FetchPriceQuote>::delayed returned error: {:?}", err);
+                warn!(
+                    "IEXProvider::<FetchPriceQuote>::delayed returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
@@ -270,43 +280,62 @@ impl FetchPriceQuote for IEXProvider {
 }
 
 impl FetchPriceRangeSeries for IEXProvider {
-
-    fn intra_day(&self, for_symbol: Symbol, interval_minutes: u8) -> RequestResult<Option<PriceRangeSeries>> {
-        debug!("IEXProvider::<FetchPriceRangeSeries>::intra_day for_symbol: {}, interval: {}",
-               for_symbol, interval_minutes);
+    fn intra_day(
+        &self,
+        for_symbol: Symbol,
+        interval_minutes: u8,
+    ) -> RequestResult<Option<PriceRangeSeries>> {
+        debug!(
+            "IEXProvider::<FetchPriceRangeSeries>::intra_day for_symbol: {}, interval: {}",
+            for_symbol, interval_minutes
+        );
         assert_is_valid!(for_symbol);
 
         let api_url = self.make_api_url(
-            format!("/stock/{}/intraday-prices?chartInterval={}", for_symbol, interval_minutes),
-            None);
+            format!(
+                "/stock/{}/intraday-prices?chartInterval={}",
+                for_symbol, interval_minutes
+            ),
+            None,
+        );
 
         let response: RequestResult<IEXIntradayPrices> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
         match response {
             Ok(values) => {
                 record_api_usage(ApiName::Intraday, values.len() as u16);
-                let series: RequestResult<Vec<Snapshot<PriceRange>>> = values.iter().map(|v|
-                    intraday_to_price_range(dc, v)
-                ).collect();
+                let series: RequestResult<Vec<Snapshot<PriceRange>>> = values
+                    .iter()
+                    .map(|v| intraday_to_price_range(dc, v))
+                    .collect();
                 match series {
                     Ok(data) => Ok(Some(PriceRangeSeries {
                         interval: SeriesInterval::Day,
                         intra_interval: Some(Duration::new((60 * interval_minutes) as u64, 0)),
-                        series: data
+                        series: data,
                     })),
-                    Err(err) => Err(err)
+                    Err(err) => Err(err),
                 }
-            },
+            }
             Err(err) => {
-                warn!("IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}", err);
+                warn!(
+                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
-    fn last(&self, for_symbol: Symbol, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
-        debug!("IEXProvider::<FetchPriceRangeSeries>::last for_symbol: {}, interval: {:?}",
-               for_symbol, interval);
+    fn last(
+        &self,
+        for_symbol: Symbol,
+        interval: SeriesInterval,
+    ) -> RequestResult<PriceRangeSeries> {
+        debug!(
+            "IEXProvider::<FetchPriceRangeSeries>::last for_symbol: {}, interval: {:?}",
+            for_symbol, interval
+        );
         assert_is_valid!(for_symbol);
 
         let range = match interval {
@@ -318,47 +347,65 @@ impl FetchPriceRangeSeries for IEXProvider {
             SeriesInterval::YearToDate => "ytd",
             SeriesInterval::OneYear => "1y",
             SeriesInterval::TwoYears => "2y",
-            SeriesInterval::FiveYears => "5y"
+            SeriesInterval::FiveYears => "5y",
         };
 
         let api_url = self.make_api_url(
             format!("/stock/{}/chart/{}?chartByDay=true", for_symbol, range),
-            None);
+            None,
+        );
 
         let response: RequestResult<IEXHistoricalPrices> = request::make_json_call(api_url);
         let dc = self.get_default_currency();
         match response {
             Ok(values) => {
                 record_api_usage(ApiName::Historical, values.len() as u16);
-                let series: RequestResult<Vec<Snapshot<PriceRange>>> = values.iter().map(|v|
-                    historical_to_price_range(dc, v)
-                ).collect();
+                let series: RequestResult<Vec<Snapshot<PriceRange>>> = values
+                    .iter()
+                    .map(|v| historical_to_price_range(dc, v))
+                    .collect();
                 match series {
                     Ok(data) => Ok(PriceRangeSeries {
-                        interval: interval,
+                        interval,
                         intra_interval: None,
-                        series: data
+                        series: data,
                     }),
-                    Err(err) => Err(err)
+                    Err(err) => Err(err),
                 }
-            },
+            }
             Err(err) => {
-                println!("IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}", err);
+                println!(
+                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}",
+                    err
+                );
                 Err(err)
             }
         }
     }
 
-    fn from(&self, for_symbol: Symbol, start_date: DateTime, interval: SeriesInterval) -> RequestResult<PriceRangeSeries> {
-        debug!("IEXProvider::<FetchPriceRangeSeries>::from for_symbol: {}, start: {}, interval: {:?}",
-               for_symbol, start_date, interval);
+    fn from(
+        &self,
+        for_symbol: Symbol,
+        start_date: DateTime,
+        interval: SeriesInterval,
+    ) -> RequestResult<PriceRangeSeries> {
+        debug!(
+            "IEXProvider::<FetchPriceRangeSeries>::from for_symbol: {}, start: {}, interval: {:?}",
+            for_symbol, start_date, interval
+        );
         assert_is_valid!(for_symbol);
         Err(RequestError::Unsupported)
     }
 
-    fn for_period(&self, for_symbol: Symbol, period: FinancialPeriod) -> RequestResult<PriceRangeSeries> {
-        debug!("IEXProvider::<FetchPriceRangeSeries>::for_period for_symbol: {}, period: {}",
-               for_symbol, period);
+    fn for_period(
+        &self,
+        for_symbol: Symbol,
+        period: FinancialPeriod,
+    ) -> RequestResult<PriceRangeSeries> {
+        debug!(
+            "IEXProvider::<FetchPriceRangeSeries>::for_period for_symbol: {}, period: {}",
+            for_symbol, period
+        );
         assert_is_valid!(for_symbol);
         Err(RequestError::Unsupported)
     }
@@ -368,28 +415,34 @@ impl FetchPriceRangeSeries for IEXProvider {
 // Private Implementations
 // ------------------------------------------------------------------------------------------------
 
-fn intraday_to_price_range(dc: &String, v : &IEXIntradayPrice) -> RequestResult<Snapshot<PriceRange>> {
+fn intraday_to_price_range(
+    dc: &String,
+    v: &IEXIntradayPrice,
+) -> RequestResult<Snapshot<PriceRange>> {
     Ok(Snapshot {
         date: datetime_from_string(&v.date, &format!("{}:00", v.minute))?,
         data: PriceRange {
             open: price_from_float(dc, v.high)?,
-            close: price_from_float(dc, v.high) ?,
-            high: price_from_float(dc, v.high) ?,
-            low: price_from_float(dc, v.low) ?,
-            volume: Some(v.volume as u64)
-        }
+            close: price_from_float(dc, v.high)?,
+            high: price_from_float(dc, v.high)?,
+            low: price_from_float(dc, v.low)?,
+            volume: Some(v.volume as u64),
+        },
     })
 }
 
-fn historical_to_price_range(dc: &String, v : &IEXHistoricalPrice) -> RequestResult<Snapshot<PriceRange>> {
+fn historical_to_price_range(
+    dc: &String,
+    v: &IEXHistoricalPrice,
+) -> RequestResult<Snapshot<PriceRange>> {
     Ok(Snapshot {
         date: datetime_from_date_string(&v.date)?,
         data: PriceRange {
             open: price_from_float(dc, v.high)?,
-            close: price_from_float(dc, v.high) ?,
-            high: price_from_float(dc, v.high) ?,
-            low: price_from_float(dc, v.low) ?,
-            volume: Some(v.volume as u64)
-        }
+            close: price_from_float(dc, v.high)?,
+            high: price_from_float(dc, v.high)?,
+            low: price_from_float(dc, v.low)?,
+            volume: Some(v.volume as u64),
+        },
     })
 }
