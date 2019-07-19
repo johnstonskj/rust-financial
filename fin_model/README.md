@@ -43,4 +43,34 @@ imported from the `::prelude` module.
 
 ## Example
 
-TBD
+The following uses the `FetchPriceRangeSeries` trait implemented by the
+provider to retrieve the last three months price information for the
+given stock symbol.
+
+```rust
+fn get_stock_price_data(provider: Provider, stock_symbol: Symbol) {
+    match provider.last(stock_symbol, SeriesInterval::ThreeMonths) {
+        Err(e) => {
+            println!("Call failed: {:?}", e);
+        }
+        Ok(series) => {
+            let mut table = Table::new();
+            table.add_row(row!["Date", "Open", "Low", "High", "Close", "Volume"]);
+            for range in series.series {
+                table.add_row(row![
+                    range.date.date(),
+                    range.data.open,
+                    range.data.low,
+                    range.data.high,
+                    range.data.close,
+                    match range.data.volume {
+                        None => "N/A".to_string(),
+                        Some(v) => v.to_formatted_string(&locale),
+                    }
+                ]);
+            }
+            table.printstd();
+        }
+    }
+}
+```
