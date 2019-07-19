@@ -28,13 +28,6 @@ matrix:
   - rust: nightly
 
   include:
-    # Only run the document creation for stable
-  - name: 'Rust: documentation'
-    rust: stable
-    script:
-    - cargo doc --verbose --package fin_model --no-deps
-    - cargo doc --verbose --package fin_data --no-deps
-    - cargo doc --verbose --package fin_iex --no-deps
 
   # Only run the formatting check for stable
   - name: 'Rust: format check'
@@ -44,7 +37,7 @@ matrix:
     script:
     - cargo fmt --verbose --all -- --check
 
-    # Only run the style check for stable, if enabled
+  # Only run the style check for stable, if enabled
   - name: 'Rust: style check'
     if: env(ENABLE_CLIPPY) = 1
     rust: stable
@@ -53,7 +46,7 @@ matrix:
     script:
     - cargo clippy --verbose --all -- -D warnings
 
-    # Only run code coverage for stable
+  # Only run code coverage for stable
   - name: 'Rust: code coverage'
     rust: stable
     os: linux
@@ -66,6 +59,9 @@ matrix:
 script:
 - cargo build --verbose --all
 - cargo test  --verbose --all
+- cargo doc   --verbose --package fin_model --no-deps
+- cargo doc   --verbose --package fin_data --no-deps
+- cargo doc   --verbose --package fin_iex --no-deps
 
 # Cargo/Crates integration
 before_deploy:
@@ -80,8 +76,7 @@ deploy:
 
 # Only initiate build on mainline branches
 branches:
-  only:
-  - master
+  only: master
 
 # Suppress at least some emails
 notifications:
