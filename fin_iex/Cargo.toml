@@ -23,8 +23,8 @@ required-features = ["iex-tool"]
 
 [dependencies]
 # Peer dependencies
-fin_model = { path = "../fin_model" }
-fin_data = { path = "../fin_data" }
+fin_model = { path = "../fin_model", version = "0.1.0" }
+fin_data = { path = "../fin_data", version = "0.1.0" }
 
 # API dependencies
 chrono = "0.4.7"

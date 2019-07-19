@@ -30,7 +30,7 @@ matrix:
     script:
     - cargo fmt --verbose --all -- --check
 
-    # Only run the style check for stable
+    # Only run the style check for stable, if enabled
   - name: 'Rust: style check'
     if: env(ENABLE_CLIPPY) = 1
     rust: stable
@@ -39,7 +39,7 @@ matrix:
     script:
     - cargo clippy --verbose --all -- -D warnings
 
-    # Only run code coverage for stable, if enabled
+    # Only run code coverage for stable
   - name: 'Rust: code coverage'
     rust: stable
     os: linux
