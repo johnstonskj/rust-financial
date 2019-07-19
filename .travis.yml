@@ -21,6 +21,7 @@ matrix:
   allow_failures:
   - rust: nightly
 
+  # Only run the formatting check for stable
   include:
   - name: 'Rust: format check'
     rust: stable
@@ -29,14 +30,16 @@ matrix:
     script:
     - cargo fmt --verbose --all -- --check
 
+    # Only run the style check for stable
   - name: 'Rust: style check'
-    rust: stable
     if: env(ENABLE_CLIPPY) = 1
+    rust: stable
     install:
     - rustup component add clippy
     script:
     - cargo clippy --verbose --all -- -D warnings
 
+    # Only run code coverage for stable, if enabled
   - name: 'Rust: code coverage'
     rust: stable
     os: linux
