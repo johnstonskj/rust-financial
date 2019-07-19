@@ -19,6 +19,7 @@ os:
 env:
   global:
   - RUST_BACKTRACE=1
+  - CRATE=fin_model fin_data fin_iex
 
 matrix:
   # Performance tweak
@@ -58,6 +59,7 @@ matrix:
 script:
 - cargo build --verbose --all
 - cargo test  --verbose --all
+- echo $CRATE
 - cargo doc   --verbose --package fin_model --no-deps
 - cargo doc   --verbose --package fin_data --no-deps
 - cargo doc   --verbose --package fin_iex --no-deps
