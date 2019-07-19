@@ -32,7 +32,7 @@ pub const MAX_SYMBOL_LENGTH: usize = 8;
 /// is the symbol valid; currently only string lengths are checked.
 #[inline(always)]
 pub fn is_valid(symbol: Symbol) -> bool {
-    symbol.len() >= 1 && symbol.len() <= MAX_SYMBOL_LENGTH
+    !symbol.is_empty() && symbol.len() <= MAX_SYMBOL_LENGTH
 }
 
 /// Type for a qualified ticker symbol using the same format

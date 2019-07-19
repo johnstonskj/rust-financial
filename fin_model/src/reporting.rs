@@ -112,7 +112,7 @@ impl FromStr for FinancialPeriod {
             static ref RE: Regex = Regex::new(r"^(([QH])(\d) )?(\d{4})$").unwrap();
         }
 
-        if s.len() == 0 {
+        if s.is_empty() {
             return Err(ParseError::EmptyString);
         }
 

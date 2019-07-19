@@ -28,14 +28,22 @@ matrix:
     before_script:
     - rustup component add rustfmt
     script:
-    - cargo fmt --all -- --check
+    - cargo fmt --verbose --all -- --check
 
   - name: 'Rust: style check'
     rust: stable
     install:
     - rustup component add clippy
     script:
-    - cargo clippy --all -- -D warnings
+    - cargo clippy --verbose --all -- -D warnings
+
+  - name: 'Rust: code coverage'
+    rust: stable
+    os: linux
+    install:
+    - cargo install cargo-tarpaulin
+    script:
+    - cargo tarpaulin --verbose --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
 
 script:
 - cargo build --verbose --all
@@ -62,3 +70,7 @@ branches:
 notifications:
   email:
     on_success: never
+
+#addons:
+#  apt:
+#    packages: libssl-dev

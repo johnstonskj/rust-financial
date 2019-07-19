@@ -67,7 +67,7 @@ impl Registry<String, Market> for ISORegistry {
 // ------------------------------------------------------------------------------------------------
 
 fn create_data_table() -> HashMap<String, Market> {
-    let table: HashMap<String, Market> = 
+    let table: HashMap<String, Market> =
     [
         ("XALS".to_string(), Market {
             country_code: "AL".to_string(),

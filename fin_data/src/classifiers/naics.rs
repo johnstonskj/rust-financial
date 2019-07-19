@@ -68,7 +68,7 @@ impl Registry<u32, Code<u32>> for Scheme {
 
 #[allow(clippy::unreadable_literal)]
 fn create_data_table() -> HashMap<u32, Code<u32>> {
-    let table: HashMap<u32, Code<u32>> = 
+    let table: HashMap<u32, Code<u32>> =
     [
         (11, Code::<u32> {
             code: 11,

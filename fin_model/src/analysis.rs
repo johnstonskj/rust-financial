@@ -79,7 +79,7 @@ impl Ratings {
                 } * *v,
             )
         });
-        (total as f64) / (count as f64)
+        f64::from(total) / f64::from(count)
     }
 }
 
