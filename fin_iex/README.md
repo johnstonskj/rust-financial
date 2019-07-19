@@ -1,11 +1,35 @@
 # Crate fin_iex
 
-This is an implementation of a number of the _request traits_ in `fin_model`
-calling the [IEX Cloud](https://iexcloud.io/).
+This is an implementation of a number of the _request traits_ in the 
+[fin_model](https://crates.io/crates/fin_model) crate calling the 
+[IEX Cloud](https://iexcloud.io/).
 
-* `fin_iex` simply exports the `IEXProvider` type from `::provider`
-* `::provider` provides an implementation of the `Provider` trait and a set of 
-  request traits from `fin_model`
+## Modules
 
-Currently this implementation only covers the `FetchPriceQuote` trait from the
-`fin_model` interface.
+* `::provider` provides an implementation of the `Provider` trait, `IEXProvider`
+
+## Implemented Traits
+
+* `fin_model::quote::FetchPriceQuote`
+* `fin_model::quote::FetchPriceRangeSeries`
+* `fin_model::analysis::Peers`
+* `fin_model::analysis::AnalystRecommendations`
+
+## Example
+
+```rust
+use fin_iex::IEXProvider;
+
+use fin_model::provider::Provider;
+
+let provider = match IEXProvider::new() {
+    Ok(provider) => provider,
+    Err(err) => panic!("Error configuring provider, {:?}", err)
+};
+
+println!("Provider = [{}]({}).", provider.attribution(), provider.url());
+```
+## Tools
+
+The optional feature `iex-tool` builds a command-line tool that can 
+exercise some of the APIs above.

@@ -1,10 +1,14 @@
 # Crate fin_data
 
-This is an implementation of the `ClassificationScheme` trait for the UK _Standard 
+This is an implementation of the `ClassificationScheme` trait (from the 
+[fin_model](https://crates.io/crates/fin_model) crate)
+for the UK _Standard 
 industrial classification of economic activities_ (UK SIC), the US _Standard 
 Industrial Classification_ (US SIC) codes as well as the _North American Industry 
 Classification System_ (NAICS). It also provides an implementation of the
 `MarketRegistry` trait for _Market Identifier Code_ (MIC) data provided by ISO.
+
+## Modules
 
 * `::classifiers::uk_sic` the UK [Standard industrial classification of 
   economic activities](https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic)

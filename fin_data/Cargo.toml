@@ -1,6 +1,6 @@
 [package]
 name = "fin_data"
-version = "0.1.0"
+version = "0.1.1-beta"
 authors = ["Simon Johnston <johnstonskj@gmail.com>"]
 edition = "2018"
 description = "Registry implementations for common financial categories."
@@ -13,5 +13,5 @@ keywords = ["financial", "SIC", "NAICS", "MIC"]
 travis-ci = {repository = "johnstonskj/rust-financial"}
 
 [dependencies]
-fin_model = { path = "../fin_model", version = "0.1.0" }
+fin_model = { path = "../fin_model", version = "0.1.1-beta" }
 chrono = "0.4.7"
