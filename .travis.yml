@@ -40,8 +40,8 @@ matrix:
   - name: 'Rust: code coverage'
     rust: stable
     os: linux
-    install:
-    - cargo install cargo-tarpaulin
+#    install:
+#    - cargo install cargo-tarpaulin
     script:
     - cargo tarpaulin --verbose --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
 
