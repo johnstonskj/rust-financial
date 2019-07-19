@@ -29,19 +29,17 @@ matrix:
     script:
     - cargo fmt --verbose --all -- --check
 
-# TODO: Fix 'error[E0308]: mismatched types' in build step
-#  - name: 'Rust: style check'
-#    rust: stable
-#    install:
-#    - rustup component add clippy
-#    script:
-#    - cargo clippy --verbose --all -- -D warnings
+  - name: 'Rust: style check'
+    rust: stable
+    if: env(ENABLE_CLIPPY) = 1
+    install:
+    - rustup component add clippy
+    script:
+    - cargo clippy --verbose --all -- -D warnings
 
   - name: 'Rust: code coverage'
     rust: stable
     os: linux
-#    install:
-#    - cargo install cargo-tarpaulin
     script:
     - cargo tarpaulin --verbose --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
 
