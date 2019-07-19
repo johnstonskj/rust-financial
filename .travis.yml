@@ -31,7 +31,7 @@ matrix:
   include:
   - name: 'Rust: format check'
     rust: stable
-    before_script:
+    install:
     - rustup component add rustfmt
     script:
     - cargo fmt --verbose --all -- --check
@@ -65,6 +65,8 @@ script:
 # Cargo/Crates integration
 before_deploy:
 - cargo package --manifest-path fin_model/Cargo.toml
+- cargo package --manifest-path fin_data/Cargo.toml
+- cargo package --manifest-path fin_iex/Cargo.toml
 deploy:
   provider: cargo
   token:
