@@ -70,13 +70,6 @@ script:
       cargo doc   --verbose --package $CRATE --no-deps
   done
 
-# Cargo/Crates integration
-before_deploy:
-- |
-  for CRATE in ${CRATES//,/ }
-  do
-      cargo package --manifest-path $CRATE/Cargo.toml
-  done
 deploy:
   provider: cargo
   token:
