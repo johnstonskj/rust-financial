@@ -1,7 +1,7 @@
 /*!
 A comprehensive data model for various financial data.
 
-The purpose of this project is to construct a comprehensive data
+The purpose of this API is to construct a comprehensive data
 model for company and market financial information in a coherent
 and idiomatic manner, not of a specific service provider's API.
 
