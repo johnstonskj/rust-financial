@@ -1,6 +1,7 @@
 # Project rust-financial
 
 [![travis.ci](https://travis-ci.org/johnstonskj/rust-financial.svg?branch=master)](https://travis-ci.org/johnstonskj/rust-financial)
+[![Coverage Status](https://coveralls.io/repos/github/johnstonskj/rust-financial/badge.svg?branch=master)](https://coveralls.io/github/johnstonskj/rust-financial?branch=master)
 ![Minimum Rust Version](https://img.shields.io/badge/Min%20Rust-1.34-green.svg)
 ![mit License](https://img.shields.io/badge/license-mit-118811.svg)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rust-financial.svg)](https://github.com/johnstonskj/rust-financial/stargazers)

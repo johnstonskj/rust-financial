@@ -12,6 +12,7 @@ autobins = false
 
 [badges]
 travis-ci = {repository = "johnstonskj/rust-financial"}
+coveralls = { repository = "rust-financial", branch = "master", service = "github" }
 
 [features]
 iex-tool = ["flexi_logger", "clap", "num-format", "prettytable-rs", "term_size"]

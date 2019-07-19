@@ -20,3 +20,15 @@ Classification System_ (NAICS). It also provides an implementation of the
 * `::markets` an implementation of `MarketRegistry` to surface data from the 
   [ISO 10383 - Market Identifier Code](https://www.iso20022.org/10383/iso-10383-market-identifier-codes)
   standard for market codes.
+  
+## Example
+
+```rust
+fn print_mic_code(code: String) {
+    let registry: ISORegistry = ISORegistry::new();
+    match registry.get(code.to_string()) {
+        None => println!("No value found for code {}", code),
+        Some(m) => println!("{}: {} ({})", code, m.description, m.country_code),
+    }
+}
+```

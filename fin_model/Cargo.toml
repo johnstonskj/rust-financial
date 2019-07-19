@@ -11,6 +11,7 @@ keywords = ["financial", "stock", "quote", "company"]
 
 [badges]
 travis-ci = {repository = "johnstonskj/rust-financial"}
+coveralls = { repository = "rust-financial", branch = "master", service = "github" }
 
 [lib]
 crate-type = ["dylib"]
