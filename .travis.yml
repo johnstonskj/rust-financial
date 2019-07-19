@@ -1,23 +1,29 @@
+# Common language header
 language: rust
 sudo: false
 cache: cargo
 
+# Channels and versions I want to build
 rust:
 - stable
 - beta
 - 1.34.0
 - nightly
 
+# Operating systems I want to test
 os:
 - linux
 - osx
 
+# Set global environment only
 env:
   global:
   - RUST_BACKTRACE=1
 
 matrix:
+  # Performance tweak
   fast_finish: true
+  # Ignore failures in nightly, not ideal, but necessary
   allow_failures:
   - rust: nightly
 
@@ -46,28 +52,32 @@ matrix:
     script:
     - cargo tarpaulin --verbose --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
 
+# Custom script
+# * adding '--all' for workspaces on build/test
+# * adding '--package' for workspaces on doc
 script:
 - cargo build --verbose --all
 - cargo test  --verbose --all
 - cargo doc   --verbose --package fin_model --no-deps
 
+# Cargo/Crates integration
 before_deploy:
 - cargo package --manifest-path fin_model/Cargo.toml
-
 deploy:
   provider: cargo
   token:
-    secure: GlZuK0h8TfDVlosbsgoSkWnvBzZ598yv6LtpRmbaE+XTeukARHGTKXdjm9gVHcyuc3H5VQIMFo0A5wEt3xWTEXafeR810M00H4vkqhk+1Pk/MJgRRzFVikYYWQ7vd1urvqR70B5v4odMulc08zFvUqiOb8yWndBU1R/4kGmtzys6xxMvz7R1So6zs9sBsBLQr81BS4cs43ZOgqzG6mqUNLHWqKZSvTjZZKjZWIY0RvqqkkssQ3s2CvdFeaJJ+b+lA6NChIjqPS1ycmYzweLjCNbKRONeNEDX19Cvs/Chc+Vhtu9xrCOnc3Bhk58gLOSJrQ7wWSe51K57OMV2FWe6C+XTfJKrasT3pu7EZ7Bv4woUBFU8lUy0XENN+lIbdeyNxGVmTGGuNtsjjOVpJXVvwuHmy80Ptj0GDiLWmMLE/3Ik1ujyzZzf9MQECpnc0sEaYEB9b1H2bT5S/q1+CewVlpEVORtmAF75aQMFyZlglR8YqIzXiRkhw2HgBVsd9rV1Ign3Q53/IAWm8jEW6lVTa3u6cPKY3OmBLXdeNPH2dKSCAYL7WvH2aD4syAou47Kl0Bb3Ow0TB3CVLQ+l851MmqzhFez4GlHJzZ1jREinEjN7JU+hvMnXVpgcVTAvpmRdO5FJGVevq/rBp1yJeOb4BavbX3eh7bnZSUSM5hZND5s=
-  on:
+    secure: GlZuK0h8TfDVlosbsgoSkWnvBzZ598yv6LtpRmbaE+XTeukARHGTKXdjm9gVHcyuc3H5VQIMFo0A5wEt3xWTEXafeR810M00H4vkqhk+1Pk/MJgRRzFVikYYWQ7vd1urvqR70B5v4odMulc08zFvUqiOb8yWndBU1R/4kGmtzys6xxMvz7R1So6zs9sBsBLQr81BS4cs43ZOgqzG6mqUNLHWqKZSvTjZZKjZWIY0RvqqkkssQ3s2CvdFeaJJ+b+lA6NChIjqPS1ycmYzweLjCNbKRONeNEDX19Cvs/Chc+Vhtu9xrCOnc3Bhk58gLOSJrQ7wWSe51K57OMV2FWe6C+XTfJKrasT3pu7EZ7Bv4woUBFU8lUy0XENN+lIbdeyNxGVmTGGuNtsjjOVpJXVvwuHmy80Ptj0GDiLWmMLE/3Ik1ujyzZzf9MQECpnc0sEaYEB9b1H2bT5S/q1+CewVlpEVORtmAF75aQMFyZlglR8YqIzXiRkhw2HgBVsd9rV1Ign3Q53/IAWm8jEW6lVTa3u6cPKY3OmBLXdeNPH2dKSCAYL7WvH2aD4syAou47Kl0Bb3Ow0TB3CVLQ+l851MmqzhFez4GlHJzZ1jREinEjN7JU+hvMnXVpgcVTAvpmRdO5FJGVevq/rBp1yJeOb4BavbX3eh7bnZSUSM5hZND5s=  on:
     tags: true
     branch: release
     condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux"
 
+# Only initiate build on mainline branches
 branches:
   only:
   - master
-  - auto
+  - release
 
+# Suppress at least some emails
 notifications:
   email:
     on_success: never
