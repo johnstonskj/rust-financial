@@ -19,7 +19,7 @@ os:
 env:
   global:
   - RUST_BACKTRACE=1
-  - CRATE=fin_model fin_data fin_iex
+  - CRATES=fin_model,fin_data,fin_iex
 
 matrix:
   # Performance tweak
@@ -59,16 +59,19 @@ matrix:
 script:
 - cargo build --verbose --all
 - cargo test  --verbose --all
-- echo $CRATE
-- cargo doc   --verbose --package fin_model --no-deps
-- cargo doc   --verbose --package fin_data --no-deps
-- cargo doc   --verbose --package fin_iex --no-deps
+- |
+  for CRATE in ${CRATES//,/ }
+  do
+      cargo doc   --verbose --package $CRATE --no-deps
+  done
 
 # Cargo/Crates integration
 before_deploy:
-- cargo package --manifest-path fin_model/Cargo.toml
-- cargo package --manifest-path fin_data/Cargo.toml
-- cargo package --manifest-path fin_iex/Cargo.toml
+- |
+  for CRATE in ${CRATES//,/ }
+  do
+      cargo package --manifest-path $CRATE/Cargo.toml
+  done
 deploy:
   provider: cargo
   token:
