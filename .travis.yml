@@ -70,16 +70,23 @@ script:
       cargo doc   --verbose --package $CRATE --no-deps
   done
 
+# Deployment script, this is under test
 deploy:
-  provider: cargo
-  token:
-    secure: GlZuK0h8TfDVlosbsgoSkWnvBzZ598yv6LtpRmbaE+XTeukARHGTKXdjm9gVHcyuc3H5VQIMFo0A5wEt3xWTEXafeR810M00H4vkqhk+1Pk/MJgRRzFVikYYWQ7vd1urvqR70B5v4odMulc08zFvUqiOb8yWndBU1R/4kGmtzys6xxMvz7R1So6zs9sBsBLQr81BS4cs43ZOgqzG6mqUNLHWqKZSvTjZZKjZWIY0RvqqkkssQ3s2CvdFeaJJ+b+lA6NChIjqPS1ycmYzweLjCNbKRONeNEDX19Cvs/Chc+Vhtu9xrCOnc3Bhk58gLOSJrQ7wWSe51K57OMV2FWe6C+XTfJKrasT3pu7EZ7Bv4woUBFU8lUy0XENN+lIbdeyNxGVmTGGuNtsjjOVpJXVvwuHmy80Ptj0GDiLWmMLE/3Ik1ujyzZzf9MQECpnc0sEaYEB9b1H2bT5S/q1+CewVlpEVORtmAF75aQMFyZlglR8YqIzXiRkhw2HgBVsd9rV1Ign3Q53/IAWm8jEW6lVTa3u6cPKY3OmBLXdeNPH2dKSCAYL7WvH2aD4syAou47Kl0Bb3Ow0TB3CVLQ+l851MmqzhFez4GlHJzZ1jREinEjN7JU+hvMnXVpgcVTAvpmRdO5FJGVevq/rBp1yJeOb4BavbX3eh7bnZSUSM5hZND5s=
+  provider: script
   on:
     tags: true
     all_branches: true
     condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux"
+  env:
+    secure: "SwxX4DVDM7eS3AjJhdDCAIWIYi9IMfiYIAu+n4Fx4fkPf8RwCg/h1gA4RV6WNZBpus8fzD065GHnYWP6BVllyFzoF2WYG9xBTcSA+gJHFrGSSqa7xNLEZCTUkSb0KLtVv7GbgVZgH4lHgh+BTfAYwTn/ty9bBoz+qlF9k0tRJsP7q8KsL+XSZWIQdQuuCFnjnkaNYoJPg3Iz4BDV77Wyr2hIK1bsos1NNslCUJxp3d3O16lEd0L2uU19iZ6ORgOaTq5NUHZ/mTaRFmtLgZjHHNp0YYaoZCZjNqG5PDXZm0vU7e7rprx6s9p1O9Ll6jEAQcE07tNa1Om26hsYCS4HP5+zqNrhb6d5oB6n5NjobOK3E1AamgbnJglh96lxqreOICGRHEwYurgq+IyxXFE+xGfkxsi45xcdiX0HueFxYgfjbjtB5osXhE0pci2UXMDwcNhjqPs3WZ1cCPQKjYx64Rxt1bnOHLj8BqNmk075wDtHNqzbNI5k5VK9IvajNfXnVLTghFqIccSHNOswVRAmcnH+nc83bj9XCe4JMOh0UzIngg+wRVIcvrTkxWWdVAE0m/8XAJr06ZWF2bGRK2AATJqSeonyBpYxl7kK/qJoUs8oCrcw0KIVe1/Wd7HUwLoy4zxuVxH07F0H/v231Zip3XMvz8P3/1Sfm27MuMYuZlw="
+  script:
+    - |
+      for CRATE in ${CRATES//,/ }
+      do
+          cargo publish --verbose --token $CARGO_TOKEN --manifest-path $CRATE/Cargo.toml
+      done
 
-# Only initiate build on mainline branches
+# Only initiate build on master or tag branches
 branches:
   only:
   - master
