@@ -21,11 +21,6 @@ env:
   - RUST_BACKTRACE=1
   - CRATES=fin_model,fin_data,fin_iex
 
-before_install:
-- echo $TRAVIS_BRANCH
-- echo $TRAVIS_TAG
-- echo $TRAVIS_COMMIT
-
 matrix:
   # Performance tweak
   fast_finish: true
