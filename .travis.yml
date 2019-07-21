@@ -20,6 +20,7 @@ env:
   global:
   - RUST_BACKTRACE=1
   - CARGO_FLAGS=--verbose
+  - SKIP_DEPLOY=0
   - secure: "SwxX4DVDM7eS3AjJhdDCAIWIYi9IMfiYIAu+n4Fx4fkPf8RwCg/h1gA4RV6WNZBpus8fzD065GHnYWP6BVllyFzoF2WYG9xBTcSA+gJHFrGSSqa7xNLEZCTUkSb0KLtVv7GbgVZgH4lHgh+BTfAYwTn/ty9bBoz+qlF9k0tRJsP7q8KsL+XSZWIQdQuuCFnjnkaNYoJPg3Iz4BDV77Wyr2hIK1bsos1NNslCUJxp3d3O16lEd0L2uU19iZ6ORgOaTq5NUHZ/mTaRFmtLgZjHHNp0YYaoZCZjNqG5PDXZm0vU7e7rprx6s9p1O9Ll6jEAQcE07tNa1Om26hsYCS4HP5+zqNrhb6d5oB6n5NjobOK3E1AamgbnJglh96lxqreOICGRHEwYurgq+IyxXFE+xGfkxsi45xcdiX0HueFxYgfjbjtB5osXhE0pci2UXMDwcNhjqPs3WZ1cCPQKjYx64Rxt1bnOHLj8BqNmk075wDtHNqzbNI5k5VK9IvajNfXnVLTghFqIccSHNOswVRAmcnH+nc83bj9XCe4JMOh0UzIngg+wRVIcvrTkxWWdVAE0m/8XAJr06ZWF2bGRK2AATJqSeonyBpYxl7kK/qJoUs8oCrcw0KIVe1/Wd7HUwLoy4zxuVxH07F0H/v231Zip3XMvz8P3/1Sfm27MuMYuZlw="
 
 matrix:
@@ -35,6 +36,8 @@ matrix:
     rust: stable
     install:
     - rustup component add rustfmt
+    env:
+    - SKIP_DEPLOY=1
     script:
     - cargo fmt --verbose --all -- --check
 
@@ -44,6 +47,8 @@ matrix:
     rust: stable
     install:
     - rustup component add clippy
+    env:
+    - SKIP_DEPLOY=1
     script:
     - cargo clippy --verbose --all -- -D warnings
 
@@ -57,7 +62,7 @@ deploy:
   on:
     tags: true
     all_branches: true
-    condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux"
+    condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux && $SKIP_DEPLOY = 0"
   script: ci/cargo-publish.sh
 
 # Only initiate build on master or tag branches

@@ -1,6 +1,6 @@
 [package]
 name = "fin_iex"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Simon Johnston <johnstonskj@gmail.com>"]
 edition = "2018"
 description = "The IEX provider for financial operations."
@@ -24,8 +24,8 @@ required-features = ["iex-tool"]
 
 [dependencies]
 # Peer dependencies
-fin_model = { path = "../fin_model", version = "0.1.1" }
-fin_data = { path = "../fin_data", version = "0.1.1" }
+fin_model = { path = "../fin_model", version = "0.1.2" }
+fin_data = { path = "../fin_data", version = "0.1.2" }
 
 # API dependencies
 chrono = "0.4.7"
