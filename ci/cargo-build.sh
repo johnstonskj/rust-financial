@@ -10,4 +10,4 @@ fi
 
 cargo build $CARGO_FLAGS $WS_FLAGS && \
 cargo test $CARGO_FLAGS $WS_FLAGS && \
-cargo doc $CARGO_FLAGS $WS_FLAGS
+cargo doc $CARGO_FLAGS $WS_FLAGS --no-deps
