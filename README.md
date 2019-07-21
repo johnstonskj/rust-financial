@@ -59,3 +59,18 @@ a number of wrapper scripts exist in the `ci/` directory. These include:
   parameter is required for a workspace.
 * `cargo-publish.sh` - publish either a crate or a workspace; in the case of
   a workspace it has to publish each crate individually and in order.
+
+For example, the [.travis.yml](https://github.com/johnstonskj/rust-financial/blob/master/.travis.yml)
+file for this repo includes the following use of these wrappers.
+
+```yaml
+script:
+- ci/cargo-build.sh
+deploy:
+  provider: script
+  on:
+    tags: true
+    all_branches: true
+    condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux && $SKIP_DEPLOY = 0"
+  script: ci/cargo-publish.sh
+```
