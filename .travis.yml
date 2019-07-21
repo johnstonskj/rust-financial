@@ -47,13 +47,6 @@ matrix:
     script:
     - cargo clippy --verbose --all -- -D warnings
 
-    # Only run code coverage for stable
-  - name: 'Rust: code coverage'
-    rust: stable
-    os: linux
-    script:
-    - cargo tarpaulin --verbose --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
-
 script:
 - ci/cargo-build.sh
 
