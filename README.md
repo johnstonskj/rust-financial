@@ -44,3 +44,18 @@ _proto_ crate, [iex-rs](https://github.com/samwho/iex-rs), I decided not to use 
 keep the focus on the transformation from low-level to fin_model API.
 
 See also [fin_iex/README](fin_iex/README.md).
+
+## Build Tools
+
+To get around some of the complexities of using Travis with a Cargo workspace
+a number of wrapper scripts exist in the `ci/` directory. These include:
+
+* `cargo-config.sh` - determines whether it's a workspace or crate build; if
+  it is a workspace it populates `$CRATES` with a comma-separated list of 
+  member crates. This script is sourced by all of those that follow.
+* `cargo-build.sh` - execute a build, either for a single crate or for a 
+  workspace.
+* `cargo-command.sh` - executes a single Cargo command where the `--all`
+  parameter is required for a workspace.
+* `cargo-publish.sh` - publish either a crate or a workspace; in the case of
+  a workspace it has to publish each crate individually and in order.
