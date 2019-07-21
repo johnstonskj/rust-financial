@@ -50,7 +50,7 @@ matrix:
     env:
     - SKIP_DEPLOY=1
     script:
-    - ci/cargo-command clippy -D warnings
+    - ci/cargo-command.sh clippy -D warnings
 
 # Script supports packages and workspaces
 script:
