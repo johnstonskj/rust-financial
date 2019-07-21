@@ -47,6 +47,7 @@ matrix:
     script:
     - cargo clippy --verbose --all -- -D warnings
 
+# Script supports packages and workspaces
 script:
 - ci/cargo-build.sh
 
