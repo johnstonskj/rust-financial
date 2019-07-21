@@ -39,7 +39,7 @@ matrix:
     env:
     - SKIP_DEPLOY=1
     script:
-    - ci/cargo-command fmt --check
+    - ci/cargo-command.sh fmt --check
 
     # Only run the style check for stable, if enabled
   - name: 'Rust: style check'
