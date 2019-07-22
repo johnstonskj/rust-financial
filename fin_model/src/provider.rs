@@ -29,6 +29,9 @@ where
     /// The URL to the provider's home page or documentation.
     fn url(&self) -> String;
 
+    /// The default currency code, using ISO three-character code.
+    fn get_default_currency(&self) -> &String;
+
     /// Optional, if the provider needs to close or complete any resources when done.
     fn finish(&self);
 }

@@ -62,11 +62,6 @@ impl IEXProvider {
             params.join("&")
         )
     }
-
-    /// The default currency used to format currency values.
-    pub fn get_default_currency(&self) -> &String {
-        &self.default_currency
-    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -144,6 +139,10 @@ impl Provider for IEXProvider {
 
     fn url(&self) -> String {
         "https://iexcloud.io/".to_string()
+    }
+
+    fn get_default_currency(&self) -> &String {
+        &self.default_currency
     }
 
     fn finish(&self) {

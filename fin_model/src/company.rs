@@ -156,7 +156,7 @@ pub trait FetchCompanyInformation {
     fn filings(
         &self,
         for_symbol: Symbol,
-        startData: Option<Date>,
+        start_date: Option<Date>,
         form_type: Option<String>,
     ) -> RequestResult<RegulatoryFilings>;
 }
