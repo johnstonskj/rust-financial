@@ -39,6 +39,8 @@ pub mod company;
 
 pub mod market;
 
+pub mod news;
+
 pub mod quote;
 
 pub mod registry;

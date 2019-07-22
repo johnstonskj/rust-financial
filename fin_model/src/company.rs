@@ -130,12 +130,35 @@ pub struct Statistics {
     pub max_change_percentage: f64,
 }
 
+pub enum TypedUrl {
+    HTML(String),
+    PDF(String),
+    Word(String),
+    Excel(String),
+}
+
+pub struct RegulatoryFiling {
+    pub identifier: String,
+    pub form_type: String,
+    pub description: String,
+    pub links: Vec<TypedUrl>,
+}
+
+pub type RegulatoryFilings = Vec<Snapshot<RegulatoryFiling>>;
+
 // ------------------------------------------------------------------------------------------------
 // Public Traits
 // ------------------------------------------------------------------------------------------------
 
 pub trait FetchCompanyInformation {
     fn about(&self, for_symbol: Symbol) -> RequestResult<About>;
+
+    fn filings(
+        &self,
+        for_symbol: Symbol,
+        startData: Option<Date>,
+        form_type: Option<String>,
+    ) -> RequestResult<RegulatoryFilings>;
 }
 
 pub trait FetchCompanyFinancials {
