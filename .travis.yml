@@ -69,7 +69,7 @@ deploy:
 branches:
   only:
   - master
-  - /\d+\.\d+(\.\d+)?(\-[a-z]+)?/
+  - /\d+\.\d+(\.\d+)?(\-[a-z]+[a-zA-Z0-9]*)?/
 
 # Suppress at least some emails
 notifications:
