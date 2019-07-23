@@ -44,7 +44,7 @@ pub type NewsFeed = Vec<Snapshot<NewsItem>>;
 /// This trait supports the fetching of news items keyed by a symbol. It supports
 /// either the latest items working back from _now_, or items working forward from
 /// _start date_.
- pub trait FetchNews {
+pub trait FetchNews {
     fn latest_news(&self, for_symbol: Symbol, max_items: usize) -> RequestResult<NewsFeed>;
 
     fn news_from(
