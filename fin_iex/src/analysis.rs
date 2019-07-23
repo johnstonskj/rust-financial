@@ -4,8 +4,8 @@ use std::str::FromStr;
 use serde;
 use serde::{Deserialize, Serialize};
 
-use fin_model::prelude::*;
 use fin_model::analysis::*;
+use fin_model::prelude::*;
 use fin_model::reporting::FinancialPeriod;
 use fin_model::symbol::is_valid;
 
