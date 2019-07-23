@@ -21,7 +21,7 @@ if [[ "$1" == "--install" ]] ; then
             ;;
         esac
     done
-    exit exit_code
+    exit $exit_code
 else
     let "exit_code=0"
     for CMD in ${CARGO_LINTER//,/ }
