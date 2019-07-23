@@ -20,6 +20,7 @@ pub enum ApiName {
     TargetPrice,
     ConsensusEPS,
     ConsensusRatings,
+    NewsFeed,
 }
 
 lazy_static! {

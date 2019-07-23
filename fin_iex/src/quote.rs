@@ -176,7 +176,7 @@ impl FetchPriceQuote for IEXProvider {
             },
             Err(err) => {
                 warn!(
-                    "IEXProvider::<FetchPriceQuote>::latest_price_only returned error: {:?}",
+                    "IEXProvider::<FetchPriceQuote>::latest_price_only returning error: {:?}",
                     err
                 );
                 Err(err)
@@ -226,7 +226,7 @@ impl FetchPriceQuote for IEXProvider {
             }
             Err(err) => {
                 warn!(
-                    "IEXProvider::<FetchPriceQuote>::real_time returned error: {:?}",
+                    "IEXProvider::<FetchPriceQuote>::real_time returning error: {:?}",
                     err
                 );
                 Err(err)
@@ -270,7 +270,7 @@ impl FetchPriceQuote for IEXProvider {
             }
             Err(err) => {
                 warn!(
-                    "IEXProvider::<FetchPriceQuote>::delayed returned error: {:?}",
+                    "IEXProvider::<FetchPriceQuote>::delayed returning error: {:?}",
                     err
                 );
                 Err(err)
@@ -319,7 +319,7 @@ impl FetchPriceRangeSeries for IEXProvider {
             }
             Err(err) => {
                 warn!(
-                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}",
+                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returning error: {:?}",
                     err
                 );
                 Err(err)
@@ -375,7 +375,7 @@ impl FetchPriceRangeSeries for IEXProvider {
             }
             Err(err) => {
                 println!(
-                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returned error: {:?}",
+                    "IEXProvider::<FetchPriceRangeSeries>::intra_day returning error: {:?}",
                     err
                 );
                 Err(err)
