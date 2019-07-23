@@ -31,7 +31,7 @@ matrix:
   allow_failures:
   - rust: nightly
 
-  # Only run the formatting check for stable
+  # Only run the formatting check for stable, turn off deployments
   include:
   - name: 'Rust: linter check'
     rust: stable
