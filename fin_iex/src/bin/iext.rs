@@ -337,7 +337,7 @@ fn registry_lookup<C: std::fmt::Display, T>(code: &C, value: Option<&T>, printer
 fn get_term_width() -> Option<usize> {
     match term_size::dimensions() {
         Some((w, h)) => Some(w),
-        None => None
+        None => None,
     }
 }
 
@@ -349,7 +349,8 @@ fn display_scale_mark(scale_mark: f64, max_width: Option<usize>) {
     let dashes = "-".repeat(pad);
     let scale = vec!["1", "2", "3", "4", "5"].join(dashes.as_str());
     let mark = scale_mark.to_string();
-    let pos = ((scale_mark.trunc() as usize - 1) * (pad + 1)) + (((pad + 1) as f64 * scale_mark.fract()) as usize);
+    let pos = ((scale_mark.trunc() as usize - 1) * (pad + 1))
+        + (((pad + 1) as f64 * scale_mark.fract()) as usize);
     if pos > 3 && mark.len() < pos - 2 {
         println!("{} {} v", " ".repeat(pos - mark.len() - 2), mark);
     } else {
