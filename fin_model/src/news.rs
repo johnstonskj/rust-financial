@@ -45,8 +45,10 @@ pub type NewsFeed = Vec<Snapshot<NewsItem>>;
 /// either the latest items working back from _now_, or items working forward from
 /// _start date_.
 pub trait FetchNews {
+    /// Return the last `max_items` items for the symbol specified.
     fn latest_news(&self, for_symbol: Symbol, max_items: usize) -> RequestResult<NewsFeed>;
 
+    /// Return `max_items` items, from `start_date` for the symbol specified.
     fn news_from(
         &self,
         for_symbol: Symbol,
@@ -59,6 +61,7 @@ pub trait FetchNews {
 /// supports either the latest items working back from _now_, or items working
 /// forward from _start date_.
 pub trait FetchCategoryNews {
+    /// Return the last `max_items` items for the category/sub-category specified.
     fn latest_news(
         &self,
         category: String,
@@ -66,6 +69,7 @@ pub trait FetchCategoryNews {
         max_items: usize,
     ) -> RequestResult<NewsFeed>;
 
+    /// Return `max_items` items, from `start_date` for the category/sub-category specified.
     fn news_from(
         &self,
         category: String,

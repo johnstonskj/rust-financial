@@ -1,4 +1,8 @@
 /*!
+Provides structs and traits that provide company information.
+
+The majority of the data provided here is information published by
+the company itself usually in regulatory filings.
 */
 
 use crate::prelude::*;

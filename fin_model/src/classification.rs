@@ -14,8 +14,9 @@ lookup of code identifiers.
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
-/// Data about a single code, note that we parameterize the type
-/// of the code identifier.
+/// Data about a single classification code, note that we parameterize the type
+/// of the code's identifier. The use of `parent_code` is optional; when present
+/// it allows simple hierarchies.
 #[derive(Debug, Clone)]
 pub struct Code<T> {
     /// the code identifier

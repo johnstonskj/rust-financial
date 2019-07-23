@@ -14,7 +14,7 @@ use crate::reporting::FinancialPeriod;
 /// Used to count things.
 pub type Counter = u32;
 
-/// The type of analyst recommendation/position.
+/// The type of an analyst recommendation/position.
 #[derive(PartialEq, Eq, Hash)]
 pub enum RatingType {
     /// Also known as strong buy and _on the recommended list_. Needless to say,
@@ -46,18 +46,27 @@ pub struct Ratings {
 
 /// Consensus price targets; high, low, and average.
 pub struct PriceTarget {
+    /// anticipated high price
     pub high: Money,
+    /// anticipated low price
     pub low: Money,
+    /// anticipated average price
     pub average: Money,
+    /// number of analysts that provided recommendations
     pub number_of_analysts: Counter,
 }
 
 /// Consensus Earnings per Share (EPS) targets for some fiscal period.
 pub struct EPSConsensus {
+    /// anticipated earnings per share
     pub consensus: Money,
+    /// number of analysts that provided recommendations
     pub number_of_estimates: Counter,
+    /// expected for this period
     pub fiscal_period: FinancialPeriod,
+    /// the company's end date for `fiscal_period`
     pub fiscal_end_date: Date,
+    /// anticipated next reporting date
     pub next_report_date: Date,
 }
 
@@ -66,6 +75,7 @@ pub struct EPSConsensus {
 // ------------------------------------------------------------------------------------------------
 
 impl Ratings {
+    /// Calculate the scaled/weighted average of the current set of ratings.
     pub fn scaled_average(&self) -> f64 {
         let (count, total) = self.ratings.iter().fold((0, 0), |(c, t), (k, v)| {
             (
@@ -93,9 +103,12 @@ pub trait Peers {
 
 /// This trait is implemented by providers to return various analyst recommendations.
 pub trait AnalystRecommendations {
+    /// Return the target price recommendations for the symbol
     fn target_price(&self, for_symbol: Symbol) -> RequestResult<Snapshot<PriceTarget>>;
 
+    /// Return the consensus ratings for the symbol
     fn consensus_rating(&self, for_symbol: Symbol) -> RequestResult<Vec<Bounded<Ratings>>>;
 
+    /// Return the consensus earnings per share (EPS) for the symbol
     fn consensus_eps(&self, for_symbol: Symbol) -> RequestResult<Vec<EPSConsensus>>;
 }
