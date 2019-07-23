@@ -11,6 +11,11 @@ use crate::prelude::*;
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
+/// Information regarding the security that represents a company. This
+/// includes the market and issue type for the security. Finally, for
+/// those providers that enable it, a sector classification is included;
+/// this value may be provided by the underlying market or simply the
+/// provider itself.
 pub struct Security {
     pub symbol: String,
     pub market: String,
@@ -19,6 +24,8 @@ pub struct Security {
     pub sector: Option<String>,
 }
 
+/// Basic information reported about a company. This information, other
+/// than the number of employees, rarely changes and can easily be cached.
 pub struct About {
     pub company_name: String,
     pub web_site: String,
@@ -29,11 +36,14 @@ pub struct About {
     pub tags: Vec<String>,
 }
 
+/// For data returned below, this indicates the time-scale represented
+/// by the data.
 pub enum ReportingPeriod {
     Quarter,
     Annual,
 }
 
+/// Reported income, categorized.
 pub struct IncomeStatement {
     pub total_revenue: i64,
     pub cost_of_revenue: i64,
@@ -56,6 +66,7 @@ pub struct IncomeStatement {
     pub net_income_to_shareholders: i64,
 }
 
+/// Reported balance sheet information in detail.
 pub struct BalanceSheet {
     pub current_cash: i64,
     pub short_term_investments: i64,
@@ -95,6 +106,7 @@ pub struct BalanceSheet {
     pub net_tangible_assets: i64,
 }
 
+/// Major statistic calculated over time.
 pub struct Statistics {
     pub shares_outstanding: u64,
     pub market_cap: i64,
@@ -141,6 +153,7 @@ pub enum TypedUrl {
     Excel(String),
 }
 
+/// Details of an individual filing.
 pub struct RegulatoryFiling {
     pub identifier: String,
     pub form_type: String,
@@ -154,6 +167,7 @@ pub type RegulatoryFilings = Vec<Snapshot<RegulatoryFiling>>;
 // Public Traits
 // ------------------------------------------------------------------------------------------------
 
+/// Fetch basic information about a company.
 pub trait FetchCompanyInformation {
     fn about(&self, for_symbol: Symbol) -> RequestResult<About>;
 
@@ -165,6 +179,7 @@ pub trait FetchCompanyInformation {
     ) -> RequestResult<RegulatoryFilings>;
 }
 
+/// Fetch ongoing financial information for a company.
 pub trait FetchCompanyFinancials {
     fn reported_income(
         &self,
@@ -181,6 +196,7 @@ pub trait FetchCompanyFinancials {
     ) -> RequestResult<Vec<Snapshot<BalanceSheet>>>;
 }
 
+/// Fetch basic statistics regarding a company.
 pub trait FetchCompanyStatistics {
     fn core_statistics(&self, for_symbol: Symbol) -> RequestResult<Statistics>;
 }
