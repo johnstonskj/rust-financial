@@ -57,8 +57,12 @@ a number of wrapper scripts exist in the `ci/` directory. These include:
   workspace.
 * `cargo-command.sh` - executes a single Cargo command where the `--all`
   parameter is required for a workspace.
+* `cargo-lint.sh` - a script that will execute one or more style check tools 
+  (currently 'fmt' and 'clippy' are supported) based upon the `CARGO_LINTER`
+  environment variable.
 * `cargo-publish.sh` - publish either a crate or a workspace; in the case of
-  a workspace it has to publish each crate individually and in order.
+  a workspace it has to publish each crate individually and in order. This can
+  be controlled with the `CARGO_PUBLISH` environment variable.
 
 For example, the [.travis.yml](https://github.com/johnstonskj/rust-financial/blob/master/.travis.yml)
 file for this repo includes the following use of these wrappers.
