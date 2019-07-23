@@ -2,7 +2,7 @@
 
 source ci/cargo-config.sh
 
-if [[ "$SKIP_DEPLOY" = "1" ]] ; then
+if [[ "$CARGO_DEPLOY" = "0" ]] ; then
     # Just in case.
     echo "Skipping deployment step for now"
     exit 0
