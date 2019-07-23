@@ -15,8 +15,10 @@ if [[ "$CARGO_TOKEN" = "" ]] ; then
     exit 2
 fi
 
+# There is no '--all' option on publish :-(
 if [[ $CARGO_WORKSPACE = 1 ]] ; then
-    # There is no '--all' option on publish :-(
+    # Refresh the Cargo.lock file first
+    cargo update
     for CRATE in ${CRATES//,/ }
     do
         # must use locked otherwise it doesn't
