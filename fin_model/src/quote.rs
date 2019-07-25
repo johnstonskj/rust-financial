@@ -15,6 +15,7 @@ The traits include the following capabilities:
 * Fetching a series of prices over time.
 
 */
+use std::collections::HashMap;
 
 use crate::prelude::*;
 use crate::reporting::FinancialPeriod;
@@ -143,6 +144,16 @@ pub trait FetchPriceQuote {
     /// Return a delayed price, or `RequestError::Unsupported` if the service
     /// provider does not provide delayed prices.
     fn delayed(&self, for_symbol: Symbol) -> RequestResult<DelayedQuote>;
+}
+
+pub trait FetchPriceQuoteBatch {
+    /// Return a real-time price, or `RequestError::Unsupported` if the service
+    /// provider cannot honor real-time requests.
+    fn real_time(&self, for_symbols: Symbols) -> RequestResult<HashMap<Symbol, Quote>>;
+
+    /// Return a delayed price, or `RequestError::Unsupported` if the service
+    /// provider does not provide delayed prices.
+    fn delayed(&self, for_symbols: Symbols) -> RequestResult<HashMap<Symbol, DelayedQuote>>;
 }
 
 /// This trait is implemented by providers that are able to provide price data
