@@ -1,3 +1,5 @@
+#![cfg(feature = "iex-tool")]
+
 #[macro_use]
 extern crate log;
 extern crate flexi_logger;
@@ -30,7 +32,6 @@ enum Command {
     None,
 }
 
-#[cfg(feature = "iex-tool")]
 fn main() {
     flexi_logger::Logger::with_env().start().unwrap();
     info!("iext::main started");
@@ -99,27 +100,28 @@ fn provider_commands(cmd: Command) {
             }
             Ok(q) => {
                 println!(
-                    "Real-Time price: {} ({} {}%), updated {} {:?}",
+                    "Real-Time price: {} ({} {}%), updated {}",
                     q.data.latest.price,
                     q.data.latest.change.unwrap(),
                     q.data.latest.percentage.unwrap(),
-                    q.date,
-                    q.data.latest_source
+                    q.date
                 );
-                let table = table!(
-                    ["Open", "Low", "High", "Close", "Volume"],
-                    [
-                        q.data.range.open,
-                        q.data.range.low,
-                        q.data.range.high,
-                        q.data.range.close,
-                        match q.data.range.volume {
-                            None => "N/A".to_string(),
-                            Some(v) => v.to_formatted_string(&locale),
-                        }
-                    ]
-                );
-                table.printstd();
+                if let Some(range) = q.data.range {
+                    let table = table!(
+                        ["Open", "Low", "High", "Close", "Volume"],
+                        [
+                            range.open,
+                            range.low,
+                            range.high,
+                            range.close,
+                            match range.volume {
+                                None => "N/A".to_string(),
+                                Some(v) => v.to_formatted_string(&locale),
+                            }
+                        ]
+                    );
+                    table.printstd();
+                }
                 if let Some(extended) = q.data.extended {
                     println!(" Extended price: {}", extended.price);
                 }
@@ -334,13 +336,15 @@ fn registry_lookup<C: std::fmt::Display, T>(code: &C, value: Option<&T>, printer
     }
 }
 
+#[allow(dead_code)]
 fn get_term_width() -> Option<usize> {
     match term_size::dimensions() {
-        Some((w, h)) => Some(w),
+        Some((w, _h)) => Some(w),
         None => None,
     }
 }
 
+#[allow(dead_code)]
 fn display_scale_mark(scale_mark: f64, max_width: Option<usize>) {
     let default_width = 25;
     let width = max_width.unwrap_or(default_width);

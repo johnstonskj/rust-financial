@@ -28,31 +28,32 @@ struct IEXQuote {
     pub company_name: String,
     pub calculation_price: String,
 
-    pub open: f64,
-    pub open_time: f64,
-    pub close: f64,
-    pub close_time: f64,
-    pub high: f64,
-    pub low: f64,
+    pub open: Option<f64>,
+    pub open_time: Option<f64>,
+    pub close: Option<f64>,
+    pub close_time: Option<f64>,
+    pub high: Option<f64>,
+    pub low: Option<f64>,
     pub latest_price: f64,
     pub latest_source: String,
     pub latest_time: String,
     pub latest_update: f64,
-    pub latest_volume: f64,
+    pub latest_volume: Option<f64>,
     pub change: f64,
     pub change_percent: f64,
 
     pub last_trade_time: f64,
 
-    pub delayed_price: f64,
-    pub delayed_price_time: f64,
+    pub delayed_price: Option<f64>,
+    pub delayed_price_time: Option<f64>,
 
     pub previous_close: f64,
+    pub previous_volume: Option<f64>,
 
-    pub extended_price: f64,
-    pub extended_price_time: f64,
-    pub extended_change: f64,
-    pub extended_change_percent: f64,
+    pub extended_price: Option<f64>,
+    pub extended_price_time: Option<f64>,
+    pub extended_change: Option<f64>,
+    pub extended_change_percent: Option<f64>,
 
     pub iex_last_updated: f64,
     pub iex_realtime_price: f64,
@@ -201,26 +202,36 @@ impl FetchPriceQuote for IEXProvider {
                 Ok(Quote {
                     date: date_from_timestamp(quote.latest_update)?,
                     data: QuotePriceFull {
-                        range: PriceRange {
-                            open: price_from_float(dc, quote.high)?,
-                            close: price_from_float(dc, quote.high)?,
-                            high: price_from_float(dc, quote.high)?,
-                            low: price_from_float(dc, quote.low)?,
-                            volume: Some(quote.latest_volume as u64),
+                        range: match (quote.open, quote.high, quote.low, quote.close) {
+                            (Some(open), Some(high), Some(low), Some(close)) =>
+                                Some(PriceRange {
+                                    open: price_from_float(dc, open)?,
+                                    close: price_from_float(dc, close)?,
+                                    high: price_from_float(dc, high)?,
+                                    low: price_from_float(dc, low)?,
+                                    volume: match quote.latest_volume {
+                                        Some(volume) => Some(volume as u64),
+                                        None => None
+                                    },
+                                }),
+                            (_, _, _, _) => None
                         },
                         latest: QuotePrice {
                             price: price_from_float(dc, quote.latest_price)?,
                             change: Some(price_from_float(dc, quote.change)?),
                             percentage: Some(quote.change_percent),
                         },
-                        latest_source: source_from_string(&quote.latest_source),
                         trade_size: None,
                         previous_close_date: None,
-                        extended: Some(QuotePrice {
-                            price: price_from_float(dc, quote.extended_price)?,
-                            change: None,
-                            percentage: None,
-                        }),
+                        extended: match quote.extended_price {
+                            Some(extended_price) =>
+                                Some(QuotePrice {
+                                    price: price_from_float(dc, extended_price)?,
+                                    change: None,
+                                    percentage: None,
+                                }),
+                            None => None
+                        }
                     },
                 })
             }

@@ -8,25 +8,10 @@ use steel_cent::currency::Currency;
 use regex::Regex;
 
 use fin_model::prelude::*;
-use fin_model::quote::*;
 
 // ------------------------------------------------------------------------------------------------
 // Public Functions
 // ------------------------------------------------------------------------------------------------
-
-pub fn source_from_string(src: &String) -> QuoteSource {
-    if src == "IEX real time price" {
-        QuoteSource::RealTime
-    } else if src == "15 minute delayed price" {
-        QuoteSource::Delayed
-    } else if src == "Close" {
-        QuoteSource::Close
-    } else if src == "Previous close" {
-        QuoteSource::PreviousClose
-    } else {
-        QuoteSource::Unknown
-    }
-}
 
 pub fn date_from_timestamp(ts: f64) -> RequestResult<DateTime> {
     Ok(DateTime::from_timestamp(ts.trunc() as i64, 0))
@@ -67,7 +52,7 @@ pub fn datetime_from_string(date: &String, time: &String) -> RequestResult<DateT
 
 pub fn price_from_string(currency: &String, price: &String) -> RequestResult<Money> {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"^(\d+)(\.(\d+))?$").unwrap();
+        static ref RE: Regex = Regex::new(r"^(\-?\d+)(\.(\d+))?$").unwrap();
     }
 
     match RE.captures(price) {
