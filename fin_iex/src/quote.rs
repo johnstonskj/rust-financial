@@ -203,18 +203,17 @@ impl FetchPriceQuote for IEXProvider {
                     date: date_from_timestamp(quote.latest_update)?,
                     data: QuotePriceFull {
                         range: match (quote.open, quote.high, quote.low, quote.close) {
-                            (Some(open), Some(high), Some(low), Some(close)) =>
-                                Some(PriceRange {
-                                    open: price_from_float(dc, open)?,
-                                    close: price_from_float(dc, close)?,
-                                    high: price_from_float(dc, high)?,
-                                    low: price_from_float(dc, low)?,
-                                    volume: match quote.latest_volume {
-                                        Some(volume) => Some(volume as u64),
-                                        None => None
-                                    },
-                                }),
-                            (_, _, _, _) => None
+                            (Some(open), Some(high), Some(low), Some(close)) => Some(PriceRange {
+                                open: price_from_float(dc, open)?,
+                                close: price_from_float(dc, close)?,
+                                high: price_from_float(dc, high)?,
+                                low: price_from_float(dc, low)?,
+                                volume: match quote.latest_volume {
+                                    Some(volume) => Some(volume as u64),
+                                    None => None,
+                                },
+                            }),
+                            (_, _, _, _) => None,
                         },
                         latest: QuotePrice {
                             price: price_from_float(dc, quote.latest_price)?,
@@ -224,14 +223,13 @@ impl FetchPriceQuote for IEXProvider {
                         trade_size: None,
                         previous_close_date: None,
                         extended: match quote.extended_price {
-                            Some(extended_price) =>
-                                Some(QuotePrice {
-                                    price: price_from_float(dc, extended_price)?,
-                                    change: None,
-                                    percentage: None,
-                                }),
-                            None => None
-                        }
+                            Some(extended_price) => Some(QuotePrice {
+                                price: price_from_float(dc, extended_price)?,
+                                change: None,
+                                percentage: None,
+                            }),
+                            None => None,
+                        },
                     },
                 })
             }
