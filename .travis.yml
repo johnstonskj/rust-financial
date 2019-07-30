@@ -24,6 +24,9 @@ env:
   - CARGO_DEPLOY=1
   - secure: "SwxX4DVDM7eS3AjJhdDCAIWIYi9IMfiYIAu+n4Fx4fkPf8RwCg/h1gA4RV6WNZBpus8fzD065GHnYWP6BVllyFzoF2WYG9xBTcSA+gJHFrGSSqa7xNLEZCTUkSb0KLtVv7GbgVZgH4lHgh+BTfAYwTn/ty9bBoz+qlF9k0tRJsP7q8KsL+XSZWIQdQuuCFnjnkaNYoJPg3Iz4BDV77Wyr2hIK1bsos1NNslCUJxp3d3O16lEd0L2uU19iZ6ORgOaTq5NUHZ/mTaRFmtLgZjHHNp0YYaoZCZjNqG5PDXZm0vU7e7rprx6s9p1O9Ll6jEAQcE07tNa1Om26hsYCS4HP5+zqNrhb6d5oB6n5NjobOK3E1AamgbnJglh96lxqreOICGRHEwYurgq+IyxXFE+xGfkxsi45xcdiX0HueFxYgfjbjtB5osXhE0pci2UXMDwcNhjqPs3WZ1cCPQKjYx64Rxt1bnOHLj8BqNmk075wDtHNqzbNI5k5VK9IvajNfXnVLTghFqIccSHNOswVRAmcnH+nc83bj9XCe4JMOh0UzIngg+wRVIcvrTkxWWdVAE0m/8XAJr06ZWF2bGRK2AATJqSeonyBpYxl7kK/qJoUs8oCrcw0KIVe1/Wd7HUwLoy4zxuVxH07F0H/v231Zip3XMvz8P3/1Sfm27MuMYuZlw="
 
+install:
+  - git clone https://github.com/johnstonskj/rust-ci.git ci
+
 matrix:
   # Performance tweak
   fast_finish: true
@@ -36,15 +39,15 @@ matrix:
   - name: 'Rust: linter check'
     rust: stable
     install:
-    - ci/cargo-lint.sh --install
+    - ci/bin/cargo-lint.sh --install
     env:
     - CARGO_DEPLOY=0
     script:
-    - ci/cargo-lint.sh
+    - ci/bin/cargo-lint.sh
 
 # Script supports packages and workspaces
 script:
-- ci/cargo-build.sh
+- ci/bin/cargo-build.sh
 
 # Deployment script, this is under test
 deploy:
@@ -53,7 +56,7 @@ deploy:
     tags: true
     all_branches: true
     condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux && $CARGO_DEPLOY = 1"
-  script: ci/cargo-publish.sh
+  script: ci/bin/cargo-publish.sh
 
 # Only initiate build on master or tag branches
 branches:
