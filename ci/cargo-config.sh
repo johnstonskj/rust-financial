@@ -23,6 +23,7 @@ else
 fi
 
 if [[ $CARGO_DEBUG = 1 ]] ; then
+    echo "Debug: setting debug flags"
     RUST_BACKTRACE=1
     RUST_LOG=info
 fi
