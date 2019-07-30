@@ -47,34 +47,5 @@ See also [fin_iex/README](fin_iex/README.md).
 
 ## Build Tools
 
-To get around some of the complexities of using Travis with a Cargo workspace
-a number of wrapper scripts exist in the `ci/` directory. These include:
-
-* `cargo-config.sh` - determines whether it's a workspace or crate build; if
-  it is a workspace it populates `$CRATES` with a comma-separated list of 
-  member crates. This script is sourced by all of those that follow.
-* `cargo-build.sh` - execute a build, either for a single crate or for a 
-  workspace.
-* `cargo-command.sh` - executes a single Cargo command where the `--all`
-  parameter is required for a workspace.
-* `cargo-lint.sh` - a script that will execute one or more style check tools 
-  (currently 'fmt' and 'clippy' are supported) based upon the `CARGO_LINTER`
-  environment variable.
-* `cargo-publish.sh` - publish either a crate or a workspace; in the case of
-  a workspace it has to publish each crate individually and in order. This can
-  be controlled with the `CARGO_PUBLISH` environment variable.
-
-For example, the [.travis.yml](https://github.com/johnstonskj/rust-financial/blob/master/.travis.yml)
-file for this repo includes the following use of these wrappers.
-
-```yaml
-script:
-- ci/cargo-build.sh
-deploy:
-  provider: script
-  on:
-    tags: true
-    all_branches: true
-    condition: "$TRAVIS_RUST_VERSION = stable && $TRAVIS_OS_NAME = linux && $SKIP_DEPLOY = 0"
-  script: ci/cargo-publish.sh
-```
+This repo relies on the [rust-ci](https://github.com/johnstonskj/rust-ci) tools
+to exeucte all the necessary build steps on Travis.
