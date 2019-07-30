@@ -39,6 +39,7 @@ matrix:
   - name: 'Rust: linter check'
     rust: stable
     install:
+    - git clone https://github.com/johnstonskj/rust-ci.git ci
     - ci/bin/cargo-lint.sh --install
     env:
     - CARGO_DEPLOY=0
