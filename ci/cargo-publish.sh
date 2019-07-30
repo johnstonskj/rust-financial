@@ -4,14 +4,14 @@ source ci/cargo-config.sh
 
 if [[ "$CARGO_DEPLOY" = "0" ]] ; then
     # Just in case.
-    echo "Skipping deployment step for now"
+    info "skipping deployment step for now"
     exit 0
 fi
 
 if [[ "$CARGO_TOKEN" = "" ]] ; then
     # Ensure this is set as a global environment
     #  variable, *and* as a secure one.
-    echo "Error: no CARGO_TOKEN environment variable"
+    error "no CARGO_TOKEN environment variable"
     exit 2
 fi
 

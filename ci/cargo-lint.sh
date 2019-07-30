@@ -3,7 +3,7 @@
 source ci/cargo-config.sh
 
 if [[ "$CARGO_LINTER" == "" ]] ; then
-    echo >&2 "Warning: no CARGO_LINTER environment variable set, doing nothing now"
+    warning "no CARGO_LINTER environment variable set, doing nothing now"
     exit 1
 else
     if [[ "$1" == "--install" ]] ; then
@@ -20,7 +20,7 @@ else
                 let "exit_code += $?"
                 ;;
             *)
-                echo >&2 "Warning: unknown command $CMD"
+                warning "unknown command $CMD"
                 let "exit_code += 100"
                 ;;
             esac
@@ -40,7 +40,7 @@ else
                 let "exit_code += $?"
                 ;;
             *)
-                echo >&2 "Warning: unknown command $CMD"
+                warning "unknown command $CMD"
                 let "exit_code += 100"
                 ;;
             esac

@@ -17,7 +17,34 @@ if $(grep -q "^\[workspace\]$" Cargo.toml) ; then
         | sed -e 's/[[:space:]]*$//' \
         | tr ' ' ',' \
     )
-    echo "Cargo workspace contains ( $CRATES ) crates"
+    echo "Info: cargo workspace contains ( $CRATES ) crates"
 else
     export CARGO_WORKSPACE=0
 fi
+
+if [[ $CARGO_DEBUG = 1 ]] ; then
+    RUST_BACKTRACE=1
+    RUST_LOG=info
+fi
+
+fatal() {
+    error $@
+}
+
+error() {
+    echo "Error: $@" 2>&1
+}
+
+warning() {
+    echo "Warning: $@" 2>&1
+}
+
+info() {
+    echo "Info: $@"
+}
+
+debug() {
+    if [[ $CARGO_DEBUG = 1 ]] ; then
+        echo "Debug: $@"
+    fi
+}
